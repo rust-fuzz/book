@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Setup - Rust Fuzz Book</title>
+        <title>Targets - Rust Fuzz Book</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="Guide on how to fuzz test software written in the Rust programming language">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -48,7 +48,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html" class="active"><strong>1.1.</strong> Setup</a></li><li><a href="./cargo-fuzz/targets.html"><strong>1.2.</strong> Targets</a></li></ul></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li><li><a href="./trophy-case.html"><strong>3.</strong> Trophy case</a></li></ul>
+            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html"><strong>1.1.</strong> Setup</a></li><li><a href="./cargo-fuzz/targets.html" class="active"><strong>1.2.</strong> Targets</a></li></ul></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li><li><a href="./trophy-case.html"><strong>3.</strong> Trophy case</a></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -68,27 +68,20 @@
                 </div>
 
                 <div id="content" class="content">
-                    <a class="header" href="./cargo-fuzz/setup.html#setup" id="setup"><h1>Setup</h1></a>
-<a class="header" href="./cargo-fuzz/setup.html#requirements" id="requirements"><h2>Requirements</h2></a>
-<p>libFuzzer needs LLVM sanitizer support, so this is only works on x86-64 Linux and x86-64 macOS for now. This also needs a nightly compiler since it uses some unstable command-line flags You'll also need a C++ compiler with C++11 support.</p>
-<a class="header" href="./cargo-fuzz/setup.html#installing" id="installing"><h2>Installing</h2></a>
-<pre><code class="language-sh">cargo install cargo-fuzz
-</code></pre>
-<a class="header" href="./cargo-fuzz/setup.html#upgrading" id="upgrading"><h2>Upgrading</h2></a>
-<pre><code class="language-sh">cargo install --force cargo-fuzz
-</code></pre>
+                    <a class="header" href="./cargo-fuzz/targets.html#targets" id="targets"><h1>Targets</h1></a>
+<p>A collection of community maintained cargo-fuzz compatible fuzz targets can be found <a href="https://github.com/rust-fuzz/targets">here</a>.</p>
 
                 </div>
 
                 <!-- Mobile navigation buttons -->
                 
-                    <a href="./cargo-fuzz.html" class="mobile-nav-chapters previous">
+                    <a href="./cargo-fuzz/setup.html" class="mobile-nav-chapters previous">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="./cargo-fuzz/targets.html" class="mobile-nav-chapters next">
+                    <a href="./afl.html" class="mobile-nav-chapters next">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -96,13 +89,13 @@
             </div>
 
             
-                <a href="./cargo-fuzz.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                <a href="./cargo-fuzz/setup.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-left"></i>
                 </a>
             
 
             
-                <a href="./cargo-fuzz/targets.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                <a href="./afl.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-right"></i>
                 </a>
             
