@@ -1,6 +1,6 @@
 # Guide
 
-### Deferred init
+## Deferred init
 
 If your program has a slow set-up phase that does not depend on the input data,
 you can set `AFL_DEFER_FORKSRV=1` for a substantial speed-up, provided that you
@@ -10,7 +10,7 @@ dependence on input. There are various other caveats, described in the section
 distributed with afl. See also [`examples/deferred-init.rs`][example-defer] in
 this repository.
 
-### Conditional compilation
+## Conditional compilation
 
 afl instrumentation adds some run-time overhead, so it's a good candidate for
 [conditional compilation][], perhaps through a [Cargo feature][]:
@@ -28,7 +28,7 @@ afl = ["afl-plugin", "afl"]
 ```
 
 
-### AFL configuration
+## AFL configuration
 
 See the afl documentation for other configuration variables. Some of these are
 set at compile time in `config.h`. For the most part they only affect
