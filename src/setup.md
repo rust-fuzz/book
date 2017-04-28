@@ -8,7 +8,7 @@ To install Docker, see the instructions in the following link:
 
 Once you have installed Docker, retrieve the afl.rs image:
 
-```
+```sh
 docker pull corey/afl.rs
 ```
 

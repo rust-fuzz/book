@@ -6,7 +6,7 @@ For this tutorial, we are going to fuzz the URL parser [rust-url](https://github
 
 Clone the repository and navigate inside:
 
-```
+```sh
 git clone https://github.com/servo/rust-url
 cd rust-url
 ```
@@ -26,7 +26,7 @@ The `afl-plugin` crate includes a compiler plugin that will be used to instrumen
 
 Open up `src/lib.rs` and add these two lines before all other non-documentation/non-comment lines:
 
-```
+```rust,ignore
 #![feature(plugin)]
 #![plugin(afl_plugin)]
 ```
@@ -37,7 +37,7 @@ The first line indicates to the compiler that we are opting-in to an unstable Ru
 
 AFL requires an executable that will read from stdin. Create a new file `src/main.rs` and add the following contents:
 
-```rust
+```rust,ignore
 #![feature(plugin)]
 #![plugin(afl_plugin)]
 
@@ -57,7 +57,7 @@ AFL needs an input directory with test cases.
 
 Make a new directory `in` and add a test:
 
-```
+```sh
 mkdir in
 echo "https://rust-lang.org" > in/basic
 ```
@@ -66,7 +66,7 @@ echo "https://rust-lang.org" > in/basic
 
 You'll need to enter the Docker environment to get the binary to compile correctly:
 
-```
+```sh
 docker run -v $(pwd):/source -it corey/afl.rs sh
 ```
 
@@ -74,7 +74,7 @@ Run `cargo build` to compile it. It will create an executable at `target/debug/u
 
 ## Fuzz
 
-```
+```sh
 afl-fuzz -i in -o out target/debug/url
 ```
 
