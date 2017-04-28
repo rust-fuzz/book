@@ -72,7 +72,7 @@
 <p><a href="https://en.wikipedia.org/wiki/Fuzz_testing">Fuzz testing</a> is a software testing technique used to find security and stability issues by providing pseudo-random data as input to the software.</p>
 <p><a href="https://www.rust-lang.org/">Rust</a> is a high performance, safe, general purpose programming language.</p>
 <p>This book will demonstrate how to perform fuzz testing for software written in Rust. The two main sections cover two different approaches. The recommended approach is with <a href="cargo-fuzz.html">cargo-fuzz</a> as its setup and workflow are much easier than with <a href="afl.rs.html">afl.rs</a>.</p>
-<a class="header" href="print.html#cargo-fuzz" id="cargo-fuzz"><h1>cargo-fuzz</h1></a>
+<a class="header" href="print.html#fuzzing-with-cargo-fuzz" id="fuzzing-with-cargo-fuzz"><h1>Fuzzing with cargo-fuzz</h1></a>
 <p><a href="https://github.com/rust-fuzz/cargo-fuzz">cargo-fuzz</a> is the recommended tool for fuzz testing Rust code.</p>
 <p>cargo-fuzz is itself not a fuzzer, but a tool to invoke a fuzzer. Currently, the only fuzzer it supports is <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> (through the <a href="https://github.com/rust-fuzz/libfuzzer-sys">libfuzzer-sys</a> crate), but it could be extended to <a href="https://github.com/rust-fuzz/cargo-fuzz/issues/1">support other fuzzers in the future</a>.</p>
 <a class="header" href="print.html#setup" id="setup"><h1>Setup</h1></a>
@@ -86,6 +86,7 @@
 </code></pre>
 <a class="header" href="print.html#targets" id="targets"><h1>Targets</h1></a>
 <p>A collection of community maintained cargo-fuzz compatible fuzz targets can be found <a href="https://github.com/rust-fuzz/targets">here</a>.</p>
+<a class="header" href="print.html#fuzzing-with-aflrs" id="fuzzing-with-aflrs"><h1>Fuzzing with afl.rs</h1></a>
 <p><a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop</a> (AFL) is a popular, effective, and modern fuzz testing tool. <a href="https://github.com/rust-fuzz/afl.rs">afl.rs</a> allows one to run AFL on code written in <a href="https://www.rust-lang.org">the Rust programming language</a>.</p>
 <a class="header" href="print.html#setup-1" id="setup-1"><h1>Setup</h1></a>
 <p>At the time of writing, the recommended approach when using afl.rs is to use a prebuilt Docker image. For more information about why this necessary, read the section following this one.</p>

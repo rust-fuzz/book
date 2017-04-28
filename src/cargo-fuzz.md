@@ -1,4 +1,4 @@
-# cargo-fuzz
+# Fuzzing with cargo-fuzz
 
 [cargo-fuzz][] is the recommended tool for fuzz testing Rust code.
 
