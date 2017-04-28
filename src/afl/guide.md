@@ -7,8 +7,7 @@ you can set `AFL_DEFER_FORKSRV=1` for a substantial speed-up, provided that you
 insert a call to `afl::init()` after the set-up and before any
 dependence on input. There are various other caveats, described in the section
 "Bonus feature: deferred instrumentation" in `llvm_mode/README.llvm`
-distributed with afl. See also [`examples/deferred-init.rs`][example-defer] in
-this repository.
+distributed with afl. See also [`examples/deferred-init.rs` in the afl.rs repository][example-defer].
 
 ## Conditional compilation
 
