@@ -2,12 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Fuzzing wth afl.rs - Rust Fuzz Book</title>
+        <title>Setup - Rust Fuzz Book</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="Guide on how to fuzz test software written in the Rust programming language">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <base href="">
+        <base href="../">
 
         <link rel="stylesheet" href="book.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -48,7 +48,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html"><strong>1.1.</strong> Setup</a></li></ul></li><li><a href="./afl.html" class="active"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li></ul>
+            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html" class="active"><strong>1.1.</strong> Setup</a></li></ul></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -68,19 +68,27 @@
                 </div>
 
                 <div id="content" class="content">
-                    <p><a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop</a> (AFL) is a popular, effective, and modern fuzz testing tool. <a href="https://github.com/rust-fuzz/afl.rs">afl.rs</a> allows one to run AFL on code written in <a href="https://www.rust-lang.org">the Rust programming language</a>.</p>
+                    <a class="header" href="./cargo-fuzz/setup.html#setup" id="setup"><h1>Setup</h1></a>
+<a class="header" href="./cargo-fuzz/setup.html#requirements" id="requirements"><h2>Requirements</h2></a>
+<p>libFuzzer needs LLVM sanitizer support, so this is only works on x86-64 Linux and x86-64 macOS for now. This also needs a nightly compiler since it uses some unstable command-line flags You'll also need a C++ compiler with C++11 support.</p>
+<a class="header" href="./cargo-fuzz/setup.html#installing" id="installing"><h2>Installing</h2></a>
+<pre><code class="language-sh">cargo install cargo-fuzz
+</code></pre>
+<a class="header" href="./cargo-fuzz/setup.html#upgrading" id="upgrading"><h2>Upgrading</h2></a>
+<pre><code class="language-sh">cargo install --force cargo-fuzz
+</code></pre>
 
                 </div>
 
                 <!-- Mobile navigation buttons -->
                 
-                    <a href="./cargo-fuzz/setup.html" class="mobile-nav-chapters previous">
+                    <a href="./cargo-fuzz.html" class="mobile-nav-chapters previous">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="./afl/setup.html" class="mobile-nav-chapters next">
+                    <a href="./afl.html" class="mobile-nav-chapters next">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -88,13 +96,13 @@
             </div>
 
             
-                <a href="./cargo-fuzz/setup.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                <a href="./cargo-fuzz.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-left"></i>
                 </a>
             
 
             
-                <a href="./afl/setup.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                <a href="./afl.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-right"></i>
                 </a>
             

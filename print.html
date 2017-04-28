@@ -48,7 +48,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li></ul>
+            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html"><strong>1.1.</strong> Setup</a></li></ul></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -75,8 +75,17 @@
 <a class="header" href="print.html#cargo-fuzz" id="cargo-fuzz"><h1>cargo-fuzz</h1></a>
 <p><a href="https://github.com/rust-fuzz/cargo-fuzz">cargo-fuzz</a> is the recommended tool for fuzz testing Rust code.</p>
 <p>cargo-fuzz is itself not a fuzzer, but a tool to invoke a fuzzer. Currently, the only fuzzer it supports is <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> (through the <a href="https://github.com/rust-fuzz/libfuzzer-sys">libfuzzer-sys</a> crate), but it could be extended to <a href="https://github.com/rust-fuzz/cargo-fuzz/issues/1">support other fuzzers in the future</a>.</p>
-<p><a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop</a> (AFL) is a popular, effective, and modern fuzz testing tool. <a href="https://github.com/rust-fuzz/afl.rs">afl.rs</a> allows one to run AFL on code written in <a href="https://www.rust-lang.org">the Rust programming language</a>.</p>
 <a class="header" href="print.html#setup" id="setup"><h1>Setup</h1></a>
+<a class="header" href="print.html#requirements" id="requirements"><h2>Requirements</h2></a>
+<p>libFuzzer needs LLVM sanitizer support, so this is only works on x86-64 Linux and x86-64 macOS for now. This also needs a nightly compiler since it uses some unstable command-line flags You'll also need a C++ compiler with C++11 support.</p>
+<a class="header" href="print.html#installing" id="installing"><h2>Installing</h2></a>
+<pre><code class="language-sh">cargo install cargo-fuzz
+</code></pre>
+<a class="header" href="print.html#upgrading" id="upgrading"><h2>Upgrading</h2></a>
+<pre><code class="language-sh">cargo install --force cargo-fuzz
+</code></pre>
+<p><a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop</a> (AFL) is a popular, effective, and modern fuzz testing tool. <a href="https://github.com/rust-fuzz/afl.rs">afl.rs</a> allows one to run AFL on code written in <a href="https://www.rust-lang.org">the Rust programming language</a>.</p>
+<a class="header" href="print.html#setup-1" id="setup-1"><h1>Setup</h1></a>
 <p>At the time of writing, the recommended approach when using afl.rs is to use a prebuilt Docker image. For more information about why this necessary, read the section following this one.</p>
 <p>To install Docker, see the instructions in the following link:</p>
 <p><a href="https://docker.com/getdocker">docker.com/getdocker</a></p>
