@@ -48,7 +48,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li><a href="./introduction.html"><strong>1.</strong> Introduction</a></li><li><a href="./setup.html"><strong>2.</strong> Setup</a></li><li><a href="./tutorial.html"><strong>3.</strong> Tutorial</a></li><li><a href="./guide.html"><strong>4.</strong> Guide</a></li></ul>
+            <ul class="chapter"><li><a href="./introduction.html"><strong>1.</strong> Introduction</a></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth AFL using afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -69,7 +69,8 @@
 
                 <div id="content" class="content">
                     <a class="header" href="print.html#introduction" id="introduction"><h1>Introduction</h1></a>
-<p><a href="https://en.wikipedia.org/wiki/Fuzz_testing">Fuzz testing</a> is a software testing technique used to find security and stability issues by providing pseudo-random data as input to the software. <a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop</a> is a popular, effective, and modern fuzz testing tool. This library, afl.rs, allows one to run AFL on code written in <a href="https://www.rust-lang.org">the Rust programming language</a>.</p>
+<p><a href="https://en.wikipedia.org/wiki/Fuzz_testing">Fuzz testing</a> is a software testing technique used to find security and stability issues by providing pseudo-random data as input to the software.</p>
+<p><a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop</a> (AFL) is a popular, effective, and modern fuzz testing tool. <a href="https://github.com/rust-fuzz/afl.rs">afl.rs</a> allows one to run AFL on code written in <a href="https://www.rust-lang.org">the Rust programming language</a>.</p>
 <a class="header" href="print.html#setup" id="setup"><h1>Setup</h1></a>
 <p>At the time of writing, the recommended approach when using afl.rs is to use a prebuilt Docker image. For more information about why this necessary, read the section following this one.</p>
 <p>To install Docker, see the instructions in the following link:</p>

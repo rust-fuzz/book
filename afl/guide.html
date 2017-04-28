@@ -7,7 +7,7 @@
         <meta name="description" content="Guide on how to fuzz test software written in the Rust programming language">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <base href="">
+        <base href="../">
 
         <link rel="stylesheet" href="book.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -48,7 +48,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li><a href="./introduction.html"><strong>1.</strong> Introduction</a></li><li><a href="./setup.html"><strong>2.</strong> Setup</a></li><li><a href="./tutorial.html"><strong>3.</strong> Tutorial</a></li><li><a href="./guide.html" class="active"><strong>4.</strong> Guide</a></li></ul>
+            <ul class="chapter"><li><a href="./introduction.html"><strong>1.</strong> Introduction</a></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth AFL using afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html" class="active"><strong>2.3.</strong> Guide</a></li></ul></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -68,8 +68,8 @@
                 </div>
 
                 <div id="content" class="content">
-                    <a class="header" href="./guide.html#guide" id="guide"><h1>Guide</h1></a>
-<a class="header" href="./guide.html#deferred-init" id="deferred-init"><h3>Deferred init</h3></a>
+                    <a class="header" href="./afl/guide.html#guide" id="guide"><h1>Guide</h1></a>
+<a class="header" href="./afl/guide.html#deferred-init" id="deferred-init"><h3>Deferred init</h3></a>
 <p>If your program has a slow set-up phase that does not depend on the input data,
 you can set <code>AFL_DEFER_FORKSRV=1</code> for a substantial speed-up, provided that you
 insert a call to <code>afl::init()</code> after the set-up and before any
@@ -77,7 +77,7 @@ dependence on input. There are various other caveats, described in the section
 &quot;Bonus feature: deferred instrumentation&quot; in <code>llvm_mode/README.llvm</code>
 distributed with afl. See also [<code>examples/deferred-init.rs</code>][example-defer] in
 this repository.</p>
-<a class="header" href="./guide.html#conditional-compilation" id="conditional-compilation"><h3>Conditional compilation</h3></a>
+<a class="header" href="./afl/guide.html#conditional-compilation" id="conditional-compilation"><h3>Conditional compilation</h3></a>
 <p>afl instrumentation adds some run-time overhead, so it's a good candidate for
 [conditional compilation][], perhaps through a [Cargo feature][]:</p>
 <pre><code class="language-toml"># You may need to add `optional = true` to the above dependencies.
@@ -91,7 +91,7 @@ afl = [&quot;afl-plugin&quot;, &quot;afl&quot;]
 #![cfg_attr(feature = &quot;afl&quot;, plugin(afl_plugin))]
 
 #}</code></pre></pre>
-<a class="header" href="./guide.html#afl-configuration" id="afl-configuration"><h3>AFL configuration</h3></a>
+<a class="header" href="./afl/guide.html#afl-configuration" id="afl-configuration"><h3>AFL configuration</h3></a>
 <p>See the afl documentation for other configuration variables. Some of these are
 set at compile time in <code>config.h</code>. For the most part they only affect
 <code>afl-fuzz</code> itself, and will work fine with this library. However, if you change
@@ -102,7 +102,7 @@ set at compile time in <code>config.h</code>. For the most part they only affect
 
                 <!-- Mobile navigation buttons -->
                 
-                    <a href="./tutorial.html" class="mobile-nav-chapters previous">
+                    <a href="./afl/tutorial.html" class="mobile-nav-chapters previous">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
@@ -112,7 +112,7 @@ set at compile time in <code>config.h</code>. For the most part they only affect
             </div>
 
             
-                <a href="./tutorial.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                <a href="./afl/tutorial.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-left"></i>
                 </a>
             

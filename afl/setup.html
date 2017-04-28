@@ -7,7 +7,7 @@
         <meta name="description" content="Guide on how to fuzz test software written in the Rust programming language">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <base href="">
+        <base href="../">
 
         <link rel="stylesheet" href="book.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -48,7 +48,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li><a href="./introduction.html"><strong>1.</strong> Introduction</a></li><li><a href="./setup.html" class="active"><strong>2.</strong> Setup</a></li><li><a href="./tutorial.html"><strong>3.</strong> Tutorial</a></li><li><a href="./guide.html"><strong>4.</strong> Guide</a></li></ul>
+            <ul class="chapter"><li><a href="./introduction.html"><strong>1.</strong> Introduction</a></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth AFL using afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html" class="active"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -68,14 +68,14 @@
                 </div>
 
                 <div id="content" class="content">
-                    <a class="header" href="./setup.html#setup" id="setup"><h1>Setup</h1></a>
+                    <a class="header" href="./afl/setup.html#setup" id="setup"><h1>Setup</h1></a>
 <p>At the time of writing, the recommended approach when using afl.rs is to use a prebuilt Docker image. For more information about why this necessary, read the section following this one.</p>
 <p>To install Docker, see the instructions in the following link:</p>
 <p><a href="https://docker.com/getdocker">docker.com/getdocker</a></p>
 <p>Once you have installed Docker, retrieve the afl.rs image:</p>
 <pre><code class="language-sh">docker pull corey/afl.rs
 </code></pre>
-<a class="header" href="./setup.html#why-is-docker-necessary" id="why-is-docker-necessary"><h2>Why is Docker necessary?</h2></a>
+<a class="header" href="./afl/setup.html#why-is-docker-necessary" id="why-is-docker-necessary"><h2>Why is Docker necessary?</h2></a>
 <p><em>Note: This is optional reading. Don't worry if you're confused by anything in this section.</em></p>
 <p>AFL is a form of coverage-guided fuzzing (i.e. AFL requires insight into what code branches have been hit). In order to accomplish this, afl.rs includes a plugin for LLVM called an <em><a href="http://llvm.org/docs/WritingAnLLVMPass.html">LLVM pass</a></em>. This is accomplished via <a href="https://github.com/frewsxcv/afl.rs/blob/master/afl-plugin/afl-llvm-pass.so.cc">a C++ file</a> that afl.rs compiles and links against LLVM. Since Rust does <em>not</em> expose its LLVM internals, the user of afl.rs will have to either: compile the pass using tools that are ABI compatible with the Rust binary they're using or compile Rust from source. Neither of these options are trivial for the user. This guide used to recommend the former strategy, but <a href="https://github.com/frewsxcv/afl.rs/issues/57">this caused issues</a>. To get around this, this guide now recommends a Dockerfile which has rustc and afl.rs that are ABI-compatible.</p>
 
@@ -83,13 +83,13 @@
 
                 <!-- Mobile navigation buttons -->
                 
-                    <a href="./introduction.html" class="mobile-nav-chapters previous">
+                    <a href="./afl.html" class="mobile-nav-chapters previous">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="./tutorial.html" class="mobile-nav-chapters next">
+                    <a href="./afl/tutorial.html" class="mobile-nav-chapters next">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -97,13 +97,13 @@
             </div>
 
             
-                <a href="./introduction.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                <a href="./afl.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-left"></i>
                 </a>
             
 
             
-                <a href="./tutorial.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                <a href="./afl/tutorial.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-right"></i>
                 </a>
             
