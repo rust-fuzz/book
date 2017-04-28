@@ -35,3 +35,7 @@ set at compile time in `config.h`. For the most part they only affect
 `afl-fuzz` itself, and will work fine with this library. However, if you change
 `SHM_ENV_VAR`, `MAP_SIZE`, or `FORKSRV_FD`, you should update this library's
 `src/config.h` to match.
+
+[example-defer]: https://github.com/frewsxcv/afl.rs/blob/master/examples/deferred-init.rs
+[conditional compilation]: https://doc.rust-lang.org/reference.html#conditional-compilation
+[Cargo feature]: http://doc.crates.io/manifest.html#the-[features]-section
