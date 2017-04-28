@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mv -f book/* .
+
 git init
 git config user.name "Corey Farwell"
 git config user.email "coreyf@rwell.org"
