@@ -29,7 +29,7 @@ cargo fuzz list
 
 The source code for this fuzz target lives in `fuzz/fuzzers/<fuzz target name>.rs`. Open that file and edit it to look like this:
 
-```ignore,rust
+```rust,ignore
 #![no_main]
 #[macro_use] extern crate libfuzzer_sys;
 extern crate url;
@@ -45,7 +45,7 @@ Random data is generated and passed as parameter `data` to the closure. The gene
 
 To being fuzzing, run:
 
-```
+```sh
 cargo fuzz run <fuzz target name>
 ```
 
