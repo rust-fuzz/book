@@ -41,9 +41,9 @@ fuzz_target!(|data: &[u8]| {
 });
 ```
 
-Random data is generated and passed as parameter `data` to the closure. The generated data is a bytes slice, so we'll need to convert it to a utf8 `&str` since rust-url expect that when parsing.
+Random data is generated and passed as the parameter `data` to the closure. The generated data is a byte slice, so we'll need to convert it to a UTF-8 `&str` since rust-url expects that when parsing.
 
-To being fuzzing, run:
+To begin fuzzing, run:
 
 ```sh
 cargo fuzz run <fuzz target name>
@@ -51,4 +51,4 @@ cargo fuzz run <fuzz target name>
 
 You're fuzzing!
 
-rust-url: https://github.com/servo/rust-url
+[rust-url]: https://github.com/servo/rust-url
