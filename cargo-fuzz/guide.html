@@ -2,12 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Fuzzing wth afl.rs - Rust Fuzz Book</title>
+        <title>Guide - Rust Fuzz Book</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="Guide on how to fuzz test software written in the Rust programming language">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <base href="">
+        <base href="../">
 
         <link rel="stylesheet" href="book.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -48,7 +48,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html"><strong>1.1.</strong> Setup</a></li><li><a href="./cargo-fuzz/tutorial.html"><strong>1.2.</strong> Tutorial</a></li><li><a href="./cargo-fuzz/guide.html"><strong>1.3.</strong> Guide</a></li><li><a href="./cargo-fuzz/targets.html"><strong>1.4.</strong> Targets</a></li></ul></li><li><a href="./afl.html" class="active"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li><li><a href="./trophy-case.html"><strong>3.</strong> Trophy case</a></li></ul>
+            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html"><strong>1.1.</strong> Setup</a></li><li><a href="./cargo-fuzz/tutorial.html"><strong>1.2.</strong> Tutorial</a></li><li><a href="./cargo-fuzz/guide.html" class="active"><strong>1.3.</strong> Guide</a></li><li><a href="./cargo-fuzz/targets.html"><strong>1.4.</strong> Targets</a></li></ul></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li><li><a href="./trophy-case.html"><strong>3.</strong> Trophy case</a></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -68,20 +68,32 @@
                 </div>
 
                 <div id="content" class="content">
-                    <a class="header" href="./afl.html#fuzzing-with-aflrs" id="fuzzing-with-aflrs"><h1>Fuzzing with afl.rs</h1></a>
-<p><a href="http://lcamtuf.coredump.cx/afl/">American fuzzy lop</a> (AFL) is a popular, effective, and modern fuzz testing tool. <a href="https://github.com/rust-fuzz/afl.rs">afl.rs</a> allows one to run AFL on code written in <a href="https://www.rust-lang.org">the Rust programming language</a>.</p>
+                    <a class="header" href="./cargo-fuzz/guide.html#guide" id="guide"><h1>Guide</h1></a>
+<p>All available commands available for cargo-fuzz:</p>
+<pre><code class="language-sh">cargo fuzz --help
+</code></pre>
+<p>Run a target:</p>
+<pre><code class="language-sh">cargo fuzz run &lt;fuzz target name&gt;
+</code></pre>
+<a class="header" href="./cargo-fuzz/guide.html#libfuzzer-configuration-options" id="libfuzzer-configuration-options"><h2>libFuzzer configuration options</h2></a>
+<p>See all the libFuzzer options:</p>
+<pre><code class="language-sh">cargo fuzz run &lt;fuzz target name&gt; -- -help=1
+</code></pre>
+<p>For example, to generate only ASCII inputs, run:</p>
+<pre><code class="language-sh">cargo fuzz run &lt;fuzz target name&gt; -- -only_ascii=1
+</code></pre>
 
                 </div>
 
                 <!-- Mobile navigation buttons -->
                 
-                    <a href="./cargo-fuzz/targets.html" class="mobile-nav-chapters previous">
+                    <a href="./cargo-fuzz/tutorial.html" class="mobile-nav-chapters previous">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="./afl/setup.html" class="mobile-nav-chapters next">
+                    <a href="./cargo-fuzz/targets.html" class="mobile-nav-chapters next">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -89,13 +101,13 @@
             </div>
 
             
-                <a href="./cargo-fuzz/targets.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                <a href="./cargo-fuzz/tutorial.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-left"></i>
                 </a>
             
 
             
-                <a href="./afl/setup.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                <a href="./cargo-fuzz/targets.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-right"></i>
                 </a>
             
