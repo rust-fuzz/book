@@ -82,7 +82,7 @@ artifact_prefix='/private/tmp/rust-url/fuzz/artifacts/fuzzer_script_1/'; Test un
 Base64: aHR0cDovL1s6XTp4xaQBOn8BWcWkDXh4OnhpOgBpOlwNfnhAACUKACkg
 ```
 
-The line in the output that starts with `http` is the input that [causes a crash in rust-url][rust-url crash].
+The line in the output that starts with `http` is the input that [causes a panic in rust-url][rust-url crash].
 
 [rust-url]: https://github.com/servo/rust-url
 [libFuzzer]: http://llvm.org/docs/LibFuzzer.html
