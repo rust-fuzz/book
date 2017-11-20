@@ -20,9 +20,20 @@
 
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
 
-        <!-- MathJax -->
-        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
 
         <!-- Fetch JQuery from CDN but have a local fallback -->
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -31,29 +42,36 @@
                 document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
             }
         </script>
+
+        <!-- Fetch store.js from local - TODO add CDN when 2.x.x is available on cdnjs -->
+        <script src="store.js"></script>
+
+        <!-- Custom JS script -->
+        
+
     </head>
     <body class="light">
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script type="text/javascript">
-            var theme = localStorage.getItem('theme');
-            if (theme == null) { theme = 'light'; }
+            var theme = store.get('mdbook-theme');
+            if (theme === null || theme === undefined) { theme = 'light'; }
             $('body').removeClass().addClass(theme);
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script type="text/javascript">
-            var sidebar = localStorage.getItem('sidebar');
+            var sidebar = store.get('mdbook-sidebar');
             if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
             else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html"><strong>1.1.</strong> Setup</a></li><li><a href="./cargo-fuzz/tutorial.html"><strong>1.2.</strong> Tutorial</a></li><li><a href="./cargo-fuzz/guide.html"><strong>1.3.</strong> Guide</a></li><li><a href="./cargo-fuzz/targets.html"><strong>1.4.</strong> Targets</a></li></ul></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html" class="active"><strong>2.2.</strong> Tutorial</a></li><li><a href="./afl/guide.html"><strong>2.3.</strong> Guide</a></li></ul></li><li><a href="./trophy-case.html"><strong>3.</strong> Trophy case</a></li></ul>
+            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html"><strong>1.1.</strong> Setup</a></li><li><a href="./cargo-fuzz/tutorial.html"><strong>1.2.</strong> Tutorial</a></li><li><a href="./cargo-fuzz/guide.html"><strong>1.3.</strong> Guide</a></li><li><a href="./cargo-fuzz/targets.html"><strong>1.4.</strong> Targets</a></li></ul></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html" class="active"><strong>2.2.</strong> Tutorial</a></li></ul></li><li><a href="./trophy-case.html"><strong>3.</strong> Trophy case</a></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
 
-            <div class="page">
+            <div class="page" tabindex="-1">
                 <div id="menu-bar" class="menu-bar">
                     <div class="left-buttons">
                         <i id="sidebar-toggle" class="fa fa-bars"></i>
@@ -63,72 +81,80 @@
                     <h1 class="menu-title">Rust Fuzz Book</h1>
 
                     <div class="right-buttons">
-                        <i id="print-button" class="fa fa-print" title="Print this book"></i>
+                        <a href="print.html">
+                            <i id="print-button" class="fa fa-print" title="Print this book"></i>
+                        </a>
                     </div>
                 </div>
 
                 <div id="content" class="content">
                     <a class="header" href="./afl/tutorial.html#tutorial" id="tutorial"><h1>Tutorial</h1></a>
-<p>For this tutorial, we are going to fuzz the URL parser <a href="https://github.com/servo/rust-url">rust-url</a>.</p>
-<a class="header" href="./afl/tutorial.html#clone" id="clone"><h2>Clone</h2></a>
-<p>Clone the repository and navigate inside:</p>
-<pre><code class="language-sh">git clone https://github.com/servo/rust-url
-cd rust-url
+<p>For this tutorial, we are going to fuzz the URL parser <a href="https://github.com/servo/rust-url">rust-url</a>. Our goal here is to find some input generated by the fuzzer such that, when passed to <a href="https://docs.rs/url/*/url/struct.Url.html#method.parse"><code>Url::parse</code></a>, it causes some sort of panic or crash to happen.</p>
+<a class="header" href="./afl/tutorial.html#create-a-fuzz-target" id="create-a-fuzz-target"><h2>Create a fuzz target</h2></a>
+<p>The first thing we’ll do is create a <em>fuzz target</em> in the form of a Rust binary crate. AFL will call the resulting binary, supplying generated bytes to standard input that we’ll pass to <code>Url::parse</code>.</p>
+<pre><code class="language-sh">cargo new --bin url-fuzz-target
+cd url-fuzz-target
 </code></pre>
-<a class="header" href="./afl/tutorial.html#dependencies" id="dependencies"><h2>Dependencies</h2></a>
-<p>Modify <code>Cargo.toml</code> and add the following lines to the <code>[dependencies]</code> section:</p>
-<pre><code class="language-toml">afl = &quot;0.1&quot;
-afl-plugin = &quot;0.1&quot;
+<p>We’ll need two depedencies in this crate:</p>
+<ul>
+<li><code>url</code>: the crate we’re fuzzing</li>
+<li><code>afl</code>: not required, but includes a couple utility functions to assist in creating fuzz targets</li>
+</ul>
+<p>So add these to the <code>Cargo.toml</code> file:</p>
+<pre><code class="language-toml">[dependencies]
+afl = &quot;0.2&quot;
+url = &quot;1.0&quot;
 </code></pre>
-<p>The <code>afl-plugin</code> crate includes a compiler plugin that will be used to instrument the rust-url crate. The <code>afl</code> crate will be used to setup the necessary runtime afl expects during afl-fuzz. Also, it has a few other utilities.</p>
-<a class="header" href="./afl/tutorial.html#instrumentation" id="instrumentation"><h2>Instrumentation</h2></a>
-<p>Open up <code>src/lib.rs</code> and add these two lines before all other non-documentation/non-comment lines:</p>
-<pre><code class="language-rust ignore">#![feature(plugin)]
-#![plugin(afl_plugin)]
-</code></pre>
-<p>The first line indicates to the compiler that we are opting-in to an unstable Rust feature: <a href="https://doc.rust-lang.org/book/compiler-plugins.html">compiler plugins</a>. The second line specifies which compiler plugin we want to use. This particular compiler plugin will add the AFL instrumentation to the rust-url crate.</p>
-<a class="header" href="./afl/tutorial.html#driver" id="driver"><h2>Driver</h2></a>
-<p>AFL requires an executable that will read from stdin. Create a new file <code>src/main.rs</code> and add the following contents:</p>
-<pre><code class="language-rust ignore">#![feature(plugin)]
-#![plugin(afl_plugin)]
-
-extern crate afl;
+<p>Now we’ll need to write the source for the fuzz target in <code>src/main.rs</code>:</p>
+<pre><code class="language-rust ignore">extern crate afl;
 extern crate url;
 
 fn main() {
-    afl::handle_string(|s| {
-        let _ = url::Url::parse(&amp;s);
-    })
+    afl::read_stdio_string(|string| {
+        let _ = url::Url::parse(&amp;string);
+    });
 }
 </code></pre>
-<a class="header" href="./afl/tutorial.html#input" id="input"><h2>Input</h2></a>
-<p>AFL needs an input directory with test cases.</p>
-<p>Make a new directory <code>in</code> and add a test:</p>
+<p><a href="https://docs.rs/afl/*/afl/fn.read_stdio_string.html"><code>read_stdio_string</code></a> is a utility function priovided the <code>afl</code> crate that reads bytes from standard input. If the bytes are valid UTF-8, a <code>String</code> is constructed from the bytes and passed to the closure argument (there is also a <a href="https://docs.rs/afl/*/afl/fn.read_stdio_bytes.html"><code>read_stdio_bytes</code></a> if you just need bytes). If the bytes are <em>not</em> valid UTF-8, the closure is not called.</p>
+<p>In the body of the closure, we call <code>Url::parse</code> with the <code>String</code> AFL generated. If all goes well, <code>url::Url::parse</code> will return an <code>Ok</code> containing a valid <code>Url</code>, or an <code>Err</code> indicating a <code>Url</code> could not be constructed from the <code>String</code>. If <code>Url::parse</code> panics while parsing the <code>String</code>, AFL will treat it as a crash and the AFL UI will indicate as such.</p>
+<a class="header" href="./afl/tutorial.html#build-the-fuzz-target" id="build-the-fuzz-target"><h2>Build the fuzz target</h2></a>
+<p>Normally, one uses <code>cargo build</code> to compile a Cargo-based Rust project. To get AFL to work with Rust, a few extra compiler flags need to be passed to rustc during the build process. To make this easier, there is an AFL cargo subcommand (provided by the <code>afl</code> crate) that automatically passes these rustc flags for us. To use it, you’ll do something like:</p>
+<pre><code class="language-sh">cargo afl &lt;cargo command&gt;
+</code></pre>
+<p>Since we want to build this crate, we’ll run:</p>
+<pre><code class="language-sh">cargo afl build
+</code></pre>
+<a class="header" href="./afl/tutorial.html#provide-starting-inputs" id="provide-starting-inputs"><h2>Provide starting inputs</h2></a>
+<p>AFL doesn't strictly require starting inputs, but providing some can make AFL’s job easier since it won’t need to ‘learn’ what a valid URL looks like. To do this, we'll create a directory called <code>in</code> with a few files (filenames don’t matter) containing valid URLs:</p>
 <pre><code class="language-sh">mkdir in
-echo &quot;https://rust-lang.org&quot; &gt; in/basic
+echo &quot;tcp://example.com/&quot; &gt; in/url
+echo &quot;ssh://192.168.1.1&quot; &gt; in/url2
+echo &quot;http://www.example.com:80/foo?hi=bar&quot; &gt; in/url3
 </code></pre>
-<a class="header" href="./afl/tutorial.html#build" id="build"><h2>Build</h2></a>
-<p>You'll need to enter the Docker environment to get the binary to compile correctly:</p>
-<pre><code class="language-sh">docker run -v $(pwd):/source -it corey/afl.rs sh
+<a class="header" href="./afl/tutorial.html#start-fuzzing" id="start-fuzzing"><h2>Start fuzzing</h2></a>
+<p>To begin fuzzing, we’ll run:</p>
+<pre><code class="language-sh">cargo afl fuzz -i in -o out target/debug/url-fuzz-target
 </code></pre>
-<p>Run <code>cargo build</code> to compile it. It will create an executable at <code>target/debug/url</code>.</p>
-<a class="header" href="./afl/tutorial.html#fuzz" id="fuzz"><h2>Fuzz</h2></a>
-<pre><code class="language-sh">afl-fuzz -i in -o out target/debug/url
-</code></pre>
-<a class="header" href="./afl/tutorial.html#exiting" id="exiting"><h2>Exiting</h2></a>
-<p>You can exit <code>afl-fuzz</code> by pressing <code>ctrl-c</code> and you can exit the Docker environment by running the <code>exit</code> command.</p>
+<p>The <code>fuzz</code> subcommand of <code>cargo-afl</code> is the primary interface for fuzzing Rust code with AFL. For those already familiar with AFL, the <code>fuzz</code> subcommand of <code>cargo-afl</code> is identical to running <code>afl-fuzz</code>.</p>
+<p>The <code>-i</code> flag specifies a directory full of input files AFL will use as seeds.</p>
+<p>The <code>-o</code> flag specifies a directory AFL will write all its state and results to.</p>
+<p>The last argument <code>target/debug/url-fuzz-target</code> specifies the fuzz target binary AFL will call, supplying random bytes to standard input.</p>
+<p>As soon as you run this command, you should see AFL’s interface start up:</p>
+<p><img src="https://raw.githubusercontent.com/rust-fuzz/afl.rs/master/etc/screencap.gif" alt="" /></p>
+<p>For more information about this UI and what each of the sections mean, see <a href="http://lcamtuf.coredump.cx/afl/status_screen.txt">this resource hosted on the AFL website</a>.</p>
+<p>AFL will run indefinitely, so if you want to quit, press <code>CTRL-C</code>.</p>
 
                 </div>
 
                 <!-- Mobile navigation buttons -->
                 
-                    <a href="./afl/setup.html" class="mobile-nav-chapters previous">
+                    <a rel="prev" href="./afl/setup.html" class="mobile-nav-chapters previous">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="./afl/guide.html" class="mobile-nav-chapters next">
+                    <a rel="next" href="./trophy-case.html" class="mobile-nav-chapters next">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -142,7 +168,7 @@ echo &quot;https://rust-lang.org&quot; &gt; in/basic
             
 
             
-                <a href="./afl/guide.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                <a href="./trophy-case.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-right"></i>
                 </a>
             
@@ -158,6 +184,12 @@ echo &quot;https://rust-lang.org&quot; &gt; in/basic
         </script>
 
         <!-- Livereload script (if served using the cli tool) -->
+        
+
+        
+
+        
+
         
 
         <script src="highlight.js"></script>

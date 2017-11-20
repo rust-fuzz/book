@@ -4,7 +4,11 @@
 
 [Rust][] is a high performance, safe, general purpose programming language.
 
-This book will demonstrate how to perform fuzz testing for software written in Rust. The two main sections cover two different approaches. The recommended approach is with [cargo-fuzz](cargo-fuzz.html) as its setup and workflow are much easier than with [afl.rs](afl.rs.html).
+This book will demonstrate how to perform fuzz testing for software written in Rust.
+
+There are two tools for fuzzing Rust code documented in this book: **[afl.rs]** and **[cargo-fuzz]**.
 
 [Fuzz testing]: https://en.wikipedia.org/wiki/Fuzz_testing
 [Rust]: https://www.rust-lang.org/
+[cargo-fuzz]: cargo-fuzz.html
+[afl.rs]: afl.html
