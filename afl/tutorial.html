@@ -102,7 +102,7 @@ cd url-fuzz-target
 </ul>
 <p>So add these to the <code>Cargo.toml</code> file:</p>
 <pre><code class="language-toml">[dependencies]
-afl = &quot;0.2&quot;
+afl = &quot;0.3&quot;
 url = &quot;1.0&quot;
 </code></pre>
 <p>Now we’ll need to write the source for the fuzz target in <code>src/main.rs</code>:</p>
@@ -116,6 +116,7 @@ fn main() {
 }
 </code></pre>
 <p><a href="https://docs.rs/afl/*/afl/fn.read_stdio_string.html"><code>read_stdio_string</code></a> is a utility function priovided the <code>afl</code> crate that reads bytes from standard input. If the bytes are valid UTF-8, a <code>String</code> is constructed from the bytes and passed to the closure argument (there is also a <a href="https://docs.rs/afl/*/afl/fn.read_stdio_bytes.html"><code>read_stdio_bytes</code></a> if you just need bytes). If the bytes are <em>not</em> valid UTF-8, the closure is not called.</p>
+<p>One important detail about the <a href="https://docs.rs/afl/*/afl/fn.read_stdio_string.html"><code>read_stdio_string</code></a> and <a href="https://docs.rs/afl/*/afl/fn.read_stdio_bytes.html"><code>read_stdio_bytes</code></a> functions: if a panic occurs within the body of the closure, the panic will be <a href="https://doc.rust-lang.org/std/panic/fn.catch_unwind.html">caught</a> and <a href="https://doc.rust-lang.org/std/process/fn.abort.html"><code>process::abort</code></a> will be subsequently called. Without the call to <a href="https://doc.rust-lang.org/std/process/fn.abort.html"><code>process::abort</code></a>, AFL would not consider the unwinding panic to be a crash.</p>
 <p>In the body of the closure, we call <code>Url::parse</code> with the <code>String</code> AFL generated. If all goes well, <code>url::Url::parse</code> will return an <code>Ok</code> containing a valid <code>Url</code>, or an <code>Err</code> indicating a <code>Url</code> could not be constructed from the <code>String</code>. If <code>Url::parse</code> panics while parsing the <code>String</code>, AFL will treat it as a crash and the AFL UI will indicate as such.</p>
 <a class="header" href="./afl/tutorial.html#build-the-fuzz-target" id="build-the-fuzz-target"><h2>Build the fuzz target</h2></a>
 <p>Normally, one uses <code>cargo build</code> to compile a Cargo-based Rust project. To get AFL to work with Rust, a few extra compiler flags need to be passed to rustc during the build process. To make this easier, there is an AFL cargo subcommand (provided by the <code>afl</code> crate) that automatically passes these rustc flags for us. To use it, you’ll do something like:</p>
