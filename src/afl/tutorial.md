@@ -20,7 +20,7 @@ So add these to the `Cargo.toml` file:
 
 ```toml
 [dependencies]
-afl = "0.2"
+afl = "0.3"
 url = "1.0"
 ```
 
@@ -37,9 +37,16 @@ fn main() {
 }
 ```
 
-[`read_stdio_string`](https://docs.rs/afl/*/afl/fn.read_stdio_string.html) is a utility function priovided the `afl` crate that reads bytes from standard input. If the bytes are valid UTF-8, a `String` is constructed from the bytes and passed to the closure argument (there is also a [`read_stdio_bytes`](https://docs.rs/afl/*/afl/fn.read_stdio_bytes.html) if you just need bytes). If the bytes are _not_ valid UTF-8, the closure is not called.
+[`read_stdio_string`] is a utility function priovided the `afl` crate that reads bytes from standard input. If the bytes are valid UTF-8, a `String` is constructed from the bytes and passed to the closure argument (there is also a [`read_stdio_bytes`] if you just need bytes). If the bytes are _not_ valid UTF-8, the closure is not called.
+
+One important detail about the [`read_stdio_string`] and [`read_stdio_bytes`] functions: if a panic occurs within the body of the closure, the panic will be [caught][`panic::catch_unwind`] and [`process::abort`] will be subsequently called. Without the call to [`process::abort`], AFL would not consider the unwinding panic to be a crash.
 
 In the body of the closure, we call `Url::parse` with the `String` AFL generated. If all goes well, `url::Url::parse` will return an `Ok` containing a valid `Url`, or an `Err` indicating a `Url` could not be constructed from the `String`. If `Url::parse` panics while parsing the `String`, AFL will treat it as a crash and the AFL UI will indicate as such.
+
+[`process::abort`]: https://doc.rust-lang.org/std/process/fn.abort.html
+[`panic::catch_unwind`]: https://doc.rust-lang.org/std/panic/fn.catch_unwind.html
+[`read_stdio_string`]: https://docs.rs/afl/*/afl/fn.read_stdio_string.html
+[`read_stdio_bytes`]: https://docs.rs/afl/*/afl/fn.read_stdio_bytes.html
 
 ## Build the fuzz target
 
