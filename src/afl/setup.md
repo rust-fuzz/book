@@ -9,9 +9,7 @@
 
 ### Platform
 
-afl.rs works on x86-64 Linux. It is possible for afl.rs to work on x86-64 macOS, but support is blocked on [this rustc bug](https://github.com/rust-lang/rust/issues/22915) ([tracking issue](https://github.com/rust-fuzz/afl.rs/issues/118)).
-
-## Installing
+afl.rs works on x86-64 Linux and x86-64 macOS.
 
 ```sh
 cargo install afl

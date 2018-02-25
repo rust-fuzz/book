@@ -6,6 +6,7 @@
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="Guide on how to fuzz test software written in the Rust programming language">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
 
         <base href="../">
 
@@ -35,67 +36,98 @@
             }
         </script>
 
-        <!-- Fetch JQuery from CDN but have a local fallback -->
-        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-        <script>
-            if (typeof jQuery == 'undefined') {
-                document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
-            }
-        </script>
-
-        <!-- Fetch store.js from local - TODO add CDN when 2.x.x is available on cdnjs -->
-        <script src="store.js"></script>
-
-        <!-- Custom JS script -->
-        
-
     </head>
     <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script type="text/javascript">
-            var theme = store.get('mdbook-theme');
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
             if (theme === null || theme === undefined) { theme = 'light'; }
-            $('body').removeClass().addClass(theme);
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script type="text/javascript">
-            var sidebar = store.get('mdbook-sidebar');
-            if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
-            else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            document.querySelector('html').classList.add("sidebar-" + sidebar);
         </script>
 
-        <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./cargo-fuzz.html"><strong>1.</strong> Fuzzing with cargo-fuzz</a></li><li><ul class="section"><li><a href="./cargo-fuzz/setup.html"><strong>1.1.</strong> Setup</a></li><li><a href="./cargo-fuzz/tutorial.html"><strong>1.2.</strong> Tutorial</a></li><li><a href="./cargo-fuzz/guide.html"><strong>1.3.</strong> Guide</a></li><li><a href="./cargo-fuzz/targets.html"><strong>1.4.</strong> Targets</a></li></ul></li><li><a href="./afl.html"><strong>2.</strong> Fuzzing wth afl.rs</a></li><li><ul class="section"><li><a href="./afl/setup.html"><strong>2.1.</strong> Setup</a></li><li><a href="./afl/tutorial.html" class="active"><strong>2.2.</strong> Tutorial</a></li></ul></li><li><a href="./trophy-case.html"><strong>3.</strong> Trophy case</a></li></ul>
-        </div>
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="introduction.html">Introduction</a></li><li><a href="cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li><a href="cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li><a href="cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li><a href="cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li><a href="cargo-fuzz/targets.html"><strong aria-hidden="true">1.4.</strong> Targets</a></li></ol></li><li><a href="afl.html"><strong aria-hidden="true">2.</strong> Fuzzing wth afl.rs</a></li><li><ol class="section"><li><a href="afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li><a href="afl/tutorial.html" class="active"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li></ol></li><li><a href="trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
+        </nav>
 
         <div id="page-wrapper" class="page-wrapper">
 
-            <div class="page" tabindex="-1">
+            <div class="page">
+                
                 <div id="menu-bar" class="menu-bar">
-                    <div class="left-buttons">
-                        <i id="sidebar-toggle" class="fa fa-bars"></i>
-                        <i id="theme-toggle" class="fa fa-paint-brush"></i>
-                    </div>
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                        </div>
 
-                    <h1 class="menu-title">Rust Fuzz Book</h1>
+                        <h1 class="menu-title">Rust Fuzz Book</h1>
 
-                    <div class="right-buttons">
-                        <a href="print.html">
-                            <i id="print-button" class="fa fa-print" title="Print this book"></i>
-                        </a>
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
                 <div id="content" class="content">
-                    <a class="header" href="./afl/tutorial.html#tutorial" id="tutorial"><h1>Tutorial</h1></a>
+                    <main>
+                        <a class="header" href="afl/tutorial.html#tutorial" id="tutorial"><h1>Tutorial</h1></a>
 <p>For this tutorial, we are going to fuzz the URL parser <a href="https://github.com/servo/rust-url">rust-url</a>. Our goal here is to find some input generated by the fuzzer such that, when passed to <a href="https://docs.rs/url/*/url/struct.Url.html#method.parse"><code>Url::parse</code></a>, it causes some sort of panic or crash to happen.</p>
-<a class="header" href="./afl/tutorial.html#create-a-fuzz-target" id="create-a-fuzz-target"><h2>Create a fuzz target</h2></a>
+<a class="header" href="afl/tutorial.html#create-a-fuzz-target" id="create-a-fuzz-target"><h2>Create a fuzz target</h2></a>
 <p>The first thing we’ll do is create a <em>fuzz target</em> in the form of a Rust binary crate. AFL will call the resulting binary, supplying generated bytes to standard input that we’ll pass to <code>Url::parse</code>.</p>
 <pre><code class="language-sh">cargo new --bin url-fuzz-target
 cd url-fuzz-target
 </code></pre>
-<p>We’ll need two depedencies in this crate:</p>
+<p>We’ll need two dependencies in this crate:</p>
 <ul>
 <li><code>url</code>: the crate we’re fuzzing</li>
 <li><code>afl</code>: not required, but includes a couple utility functions to assist in creating fuzz targets</li>
@@ -115,24 +147,24 @@ fn main() {
     });
 }
 </code></pre>
-<p><a href="https://docs.rs/afl/*/afl/fn.read_stdio_string.html"><code>read_stdio_string</code></a> is a utility function priovided the <code>afl</code> crate that reads bytes from standard input. If the bytes are valid UTF-8, a <code>String</code> is constructed from the bytes and passed to the closure argument (there is also a <a href="https://docs.rs/afl/*/afl/fn.read_stdio_bytes.html"><code>read_stdio_bytes</code></a> if you just need bytes). If the bytes are <em>not</em> valid UTF-8, the closure is not called.</p>
+<p><a href="https://docs.rs/afl/*/afl/fn.read_stdio_string.html"><code>read_stdio_string</code></a> is a utility function provided the <code>afl</code> crate that reads bytes from standard input. If the bytes are valid UTF-8, a <code>String</code> is constructed from the bytes and passed to the closure argument (there is also a <a href="https://docs.rs/afl/*/afl/fn.read_stdio_bytes.html"><code>read_stdio_bytes</code></a> if you just need bytes). If the bytes are <em>not</em> valid UTF-8, the closure is not called.</p>
 <p>One important detail about the <a href="https://docs.rs/afl/*/afl/fn.read_stdio_string.html"><code>read_stdio_string</code></a> and <a href="https://docs.rs/afl/*/afl/fn.read_stdio_bytes.html"><code>read_stdio_bytes</code></a> functions: if a panic occurs within the body of the closure, the panic will be <a href="https://doc.rust-lang.org/std/panic/fn.catch_unwind.html">caught</a> and <a href="https://doc.rust-lang.org/std/process/fn.abort.html"><code>process::abort</code></a> will be subsequently called. Without the call to <a href="https://doc.rust-lang.org/std/process/fn.abort.html"><code>process::abort</code></a>, AFL would not consider the unwinding panic to be a crash.</p>
 <p>In the body of the closure, we call <code>Url::parse</code> with the <code>String</code> AFL generated. If all goes well, <code>url::Url::parse</code> will return an <code>Ok</code> containing a valid <code>Url</code>, or an <code>Err</code> indicating a <code>Url</code> could not be constructed from the <code>String</code>. If <code>Url::parse</code> panics while parsing the <code>String</code>, AFL will treat it as a crash and the AFL UI will indicate as such.</p>
-<a class="header" href="./afl/tutorial.html#build-the-fuzz-target" id="build-the-fuzz-target"><h2>Build the fuzz target</h2></a>
+<a class="header" href="afl/tutorial.html#build-the-fuzz-target" id="build-the-fuzz-target"><h2>Build the fuzz target</h2></a>
 <p>Normally, one uses <code>cargo build</code> to compile a Cargo-based Rust project. To get AFL to work with Rust, a few extra compiler flags need to be passed to rustc during the build process. To make this easier, there is an AFL cargo subcommand (provided by the <code>afl</code> crate) that automatically passes these rustc flags for us. To use it, you’ll do something like:</p>
 <pre><code class="language-sh">cargo afl &lt;cargo command&gt;
 </code></pre>
 <p>Since we want to build this crate, we’ll run:</p>
 <pre><code class="language-sh">cargo afl build
 </code></pre>
-<a class="header" href="./afl/tutorial.html#provide-starting-inputs" id="provide-starting-inputs"><h2>Provide starting inputs</h2></a>
+<a class="header" href="afl/tutorial.html#provide-starting-inputs" id="provide-starting-inputs"><h2>Provide starting inputs</h2></a>
 <p>AFL doesn't strictly require starting inputs, but providing some can make AFL’s job easier since it won’t need to ‘learn’ what a valid URL looks like. To do this, we'll create a directory called <code>in</code> with a few files (filenames don’t matter) containing valid URLs:</p>
 <pre><code class="language-sh">mkdir in
 echo &quot;tcp://example.com/&quot; &gt; in/url
 echo &quot;ssh://192.168.1.1&quot; &gt; in/url2
 echo &quot;http://www.example.com:80/foo?hi=bar&quot; &gt; in/url3
 </code></pre>
-<a class="header" href="./afl/tutorial.html#start-fuzzing" id="start-fuzzing"><h2>Start fuzzing</h2></a>
+<a class="header" href="afl/tutorial.html#start-fuzzing" id="start-fuzzing"><h2>Start fuzzing</h2></a>
 <p>To begin fuzzing, we’ll run:</p>
 <pre><code class="language-sh">cargo afl fuzz -i in -o out target/debug/url-fuzz-target
 </code></pre>
@@ -145,46 +177,55 @@ echo &quot;http://www.example.com:80/foo?hi=bar&quot; &gt; in/url3
 <p>For more information about this UI and what each of the sections mean, see <a href="http://lcamtuf.coredump.cx/afl/status_screen.txt">this resource hosted on the AFL website</a>.</p>
 <p>AFL will run indefinitely, so if you want to quit, press <code>CTRL-C</code>.</p>
 
-                </div>
+                    </main>
 
-                <!-- Mobile navigation buttons -->
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="afl/setup.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="trophy-case.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="./afl/setup.html" class="mobile-nav-chapters previous">
+                    <a href="afl/setup.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="./trophy-case.html" class="mobile-nav-chapters next">
+                    <a href="trophy-case.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
-
-            </div>
-
-            
-                <a href="./afl/setup.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
-                    <i class="fa fa-angle-left"></i>
-                </a>
-            
-
-            
-                <a href="./trophy-case.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            
+            </nav>
 
         </div>
 
 
         <!-- Local fallback for Font Awesome -->
         <script>
-            if ($(".fa").css("font-family") !== "FontAwesome") {
-                $('<link rel="stylesheet" type="text/css" href="_FontAwesome/css/font-awesome.css">').prependTo('head');
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
             }
         </script>
 
-        <!-- Livereload script (if served using the cli tool) -->
         
 
         
@@ -195,5 +236,9 @@ echo &quot;http://www.example.com:80/foo?hi=bar&quot; &gt; in/url3
 
         <script src="highlight.js"></script>
         <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
     </body>
 </html>
