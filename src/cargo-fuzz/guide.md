@@ -13,6 +13,19 @@ Run a target:
 cargo fuzz run <fuzz target name>
 ```
 
+## Cargo features
+
+It is possible to fuzz crates with different configurations of Cargo features by using the command line options `--features`, `--no-default-features` and `--all-features`. Note that these options control the `fuzz_targets` crate; you will need to forward them to the crate being fuzzed by e.g. adding the following to `fuzz_targets/Cargo.toml`:
+
+```toml
+[features]
+unsafe = ["project/unsafe"]
+```
+
+## `#[cfg(fuzzing)]`
+
+Every crate instrumented for fuzzing -- the `fuzz_targets` crate, the project crate, and their entire dependency tree -- is compiled with the `--cfg fuzzing` rustc option. This makes it possible to disable code paths that prevent fuzzing from working, e.g. verification of cryptographic signatures, with a simple `#[cfg(not(fuzzing))]`, and without the need for an externally visible Cargo feature that must be maintained throughout every dependency.
+
 ## libFuzzer configuration options
 
 See all the libFuzzer options:

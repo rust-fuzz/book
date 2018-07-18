@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="en" class="sidebar-visible no-js">
     <head>
+        <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Guide - Rust Fuzz Book</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -17,24 +18,16 @@
         <link rel="shortcut icon" href="favicon.png">
 
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
 
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
-        <!-- Custom theme -->
+        <!-- Custom theme stylesheets -->
         
 
         
-
-        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
-        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
-        <script>
-            if (typeof Clipboard == 'undefined') {
-                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
-            }
-        </script>
 
     </head>
     <body class="light">
@@ -60,17 +53,19 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
             if (theme === null || theme === undefined) { theme = 'light'; }
             document.body.className = theme;
-            document.querySelector('html').className = theme;
+            document.querySelector('html').className = theme + ' js';
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script type="text/javascript">
+            var html = document.querySelector('html');
             var sidebar = 'hidden';
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             }
-            document.querySelector('html').classList.add("sidebar-" + sidebar);
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
@@ -97,9 +92,14 @@
                                 <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                                 <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                             </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
                         </div>
 
-                        <h1 class="menu-title">Rust Fuzz Book</h1>
+                        <h1 class="menu-title">Rust Fuzz Book</h1> 
 
                         <div class="right-buttons">
                             <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -108,6 +108,19 @@
                         </div>
                     </div>
                 </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script type="text/javascript">
@@ -127,6 +140,13 @@
 <p>Run a target:</p>
 <pre><code class="language-sh">cargo fuzz run &lt;fuzz target name&gt;
 </code></pre>
+<a class="header" href="cargo-fuzz/guide.html#cargo-features" id="cargo-features"><h2>Cargo features</h2></a>
+<p>It is possible to fuzz crates with different configurations of Cargo features by using the command line options <code>--features</code>, <code>--no-default-features</code> and <code>--all-features</code>. Note that these options control the <code>fuzz_targets</code> crate; you will need to forward them to the crate being fuzzed by e.g. adding the following to <code>fuzz_targets/Cargo.toml</code>:</p>
+<pre><code class="language-toml">[features]
+unsafe = [&quot;project/unsafe&quot;]
+</code></pre>
+<a class="header" href="cargo-fuzz/guide.html#cfgfuzzing" id="cfgfuzzing"><h2><code>#[cfg(fuzzing)]</code></h2></a>
+<p>Every crate instrumented for fuzzing -- the <code>fuzz_targets</code> crate, the project crate, and their entire dependency tree -- is compiled with the <code>--cfg fuzzing</code> rustc option. This makes it possible to disable code paths that prevent fuzzing from working, e.g. verification of cryptographic signatures, with a simple <code>#[cfg(not(fuzzing))]</code>, and without the need for an externally visible Cargo feature that must be maintained throughout every dependency.</p>
 <a class="header" href="cargo-fuzz/guide.html#libfuzzer-configuration-options" id="libfuzzer-configuration-options"><h2>libFuzzer configuration options</h2></a>
 <p>See all the libFuzzer options:</p>
 <pre><code class="language-sh">cargo fuzz run &lt;fuzz target name&gt; -- -help=1
@@ -172,18 +192,6 @@
 
         </div>
 
-
-        <!-- Local fallback for Font Awesome -->
-        <script>
-            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                link.href = '_FontAwesome/css/font-awesome.css';
-                document.head.insertBefore(link, document.head.firstChild)
-            }
-        </script>
-
         
 
         
@@ -191,11 +199,21 @@
         
 
         
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
 
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
 
-        <!-- Custom JS script -->
+        <!-- Custom JS scripts -->
+        
+
         
 
     </body>
