@@ -9,8 +9,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <base href="">
-
         <link rel="stylesheet" href="book.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
@@ -133,7 +131,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="cargo-fuzz.html#fuzzing-with-cargo-fuzz" id="fuzzing-with-cargo-fuzz"><h1>Fuzzing with cargo-fuzz</h1></a>
+                        <a class="header" href="#fuzzing-with-cargo-fuzz" id="fuzzing-with-cargo-fuzz"><h1>Fuzzing with cargo-fuzz</h1></a>
 <p><a href="https://github.com/rust-fuzz/cargo-fuzz">cargo-fuzz</a> is the recommended tool for fuzz testing Rust code.</p>
 <p>cargo-fuzz is itself not a fuzzer, but a tool to invoke a fuzzer. Currently, the only fuzzer it supports is <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> (through the <a href="https://github.com/rust-fuzz/libfuzzer-sys">libfuzzer-sys</a> crate), but it could be extended to <a href="https://github.com/rust-fuzz/cargo-fuzz/issues/1">support other fuzzers in the future</a>.</p>
 
@@ -182,6 +180,9 @@
 
         
         <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        <script>
+            var path_to_root = "";
+        </script>
         
         
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
