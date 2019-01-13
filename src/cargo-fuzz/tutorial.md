@@ -27,7 +27,7 @@ This will create a directory called `fuzz_targets` which will contain a collecti
 cargo fuzz list
 ```
 
-The source code for this fuzz target lives in `fuzz/fuzzers/<fuzz target name>.rs`. Open that file and edit it to look like this:
+The source code for this fuzz target by default lives in `fuzz/fuzz_targets/<fuzz target name>.rs`. Open that file and edit it to look like this:
 
 ```rust,ignore
 #![no_main]
