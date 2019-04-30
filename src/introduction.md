@@ -4,7 +4,7 @@
 
 [Rust][] is a high performance, safe, general purpose programming language.
 
-This book will demonstrate how to perform fuzz testing for software written in Rust.
+This book demonstrates how to perform fuzz testing for software written in Rust.
 
 There are two tools for fuzzing Rust code documented in this book: **[afl.rs]** and **[cargo-fuzz]**.
 
