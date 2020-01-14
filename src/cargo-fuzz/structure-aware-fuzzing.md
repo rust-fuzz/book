@@ -2,11 +2,11 @@
 
 Not every fuzz target wants to take a buffer of raw bytes as input. We might
 want to only feed it well-formed instances of some structured data. Luckily, the
-`libfuzzer` crate enables us to define fuzz targets that take any kind of type,
+`libfuzzer-sys` crate enables us to define fuzz targets that take any kind of type,
 as long as it implements [the `Arbitrary` trait][arbitrary-trait].
 
 ```rust,ignore
-libfuzzer::fuzz_target!(|input: AnyTypeThatImplementsArbitrary| {
+libfuzzer_sys::fuzz_target!(|input: AnyTypeThatImplementsArbitrary| {
     // Use `input` here...
 })
 ```
@@ -15,11 +15,11 @@ The `arbitrary` crate implements `Arbitrary` for nearly all the types in `std`,
 including collections like `Vec` and `HashMap` as well as things like `String`
 and `PathBuf`.
 
-For convenience, the `libfuzzer` crate re-exports the `arbitrary` crate as
-`libfuzzer::arbitrary`. You can also enable `#[derive(Arbitrary)]` either by
+For convenience, the `libfuzzer-sys` crate re-exports the `arbitrary` crate as
+`libfuzzer_sys::arbitrary`. You can also enable `#[derive(Arbitrary)]` either by
 
 * enabling the `arbitary` crate's `"derive"` feature, or
-* (equivalently) enabling the `libfuzzer` crate's `"arbitrary-derive"` feature.
+* (equivalently) enabling the `libfuzzer-sys` crate's `"arbitrary-derive"` feature.
 
 [See the `arbitrary` crate's documentation for more details.](https://docs.rs/arbitrary)
 
@@ -97,7 +97,7 @@ type, our fuzz target can take instances of `Rgb` directly:
 ```rust,ignore
 // fuzz/fuzz_targets/rgb_to_hsl_and_back.rs
 
-libfuzzer::fuzz_target!(|color: Rgb| {
+libfuzzer_sys::fuzz_target!(|color: Rgb| {
     let hsl = color.to_hsl();
     let rgb = hsl.to_rgb();
 
@@ -131,7 +131,7 @@ implementation by hand, we want to derive it.
 # fuzz/Cargo.toml
 
 [dependencies]
-libfuzzer = { version = "0.2.0", features = ["arbitrary-derive"] }
+libfuzzer-sys = { version = "0.2.0", features = ["arbitrary-derive"] }
 ```
 
 ### Define an `AllocatorMethod` Type and Derive `Arbitrary`
@@ -142,7 +142,7 @@ Next, we define an `enum` that represents either a `malloc`, a `realloc`, or a
 ```rust,ignore
 // fuzz_targets/fuzz_malloc_free.rs
 
-use libfuzzer::arbitrary::Arbitrary;
+use libfuzzer_sys::arbitrary::Arbitrary;
 
 #[derive(Arbitrary, Debug)]
 enum AllocatorMethod {
@@ -173,7 +173,7 @@ calls. This works because `Vec<T>` implements `Arbitrary` when `T` implements
 ```rust,ignore
 // fuzz/fuzz_targets/fuzz_malloc_free.rs
 
-libfuzzer::fuzz_target!(|methods: Vec<AllocatorMethod>| {
+libfuzzer_sys::fuzz_target!(|methods: Vec<AllocatorMethod>| {
     let mut allocs = vec![];
 
     // Interpret the fuzzer-provided methods and make the
