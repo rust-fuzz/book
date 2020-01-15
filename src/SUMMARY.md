@@ -6,9 +6,9 @@
     * [Setup](./cargo-fuzz/setup.md)
     * [Tutorial](./cargo-fuzz/tutorial.md)
     * [Guide](./cargo-fuzz/guide.md)
+    * [Structure-Aware Fuzzing](./cargo-fuzz/structure-aware-fuzzing.md)
     * [Targets](./cargo-fuzz/targets.md)
 * [Fuzzing wth afl.rs](./afl.md)
     * [Setup](./afl/setup.md)
     * [Tutorial](./afl/tutorial.md)
 * [Trophy case](./trophy-case.md)
-
