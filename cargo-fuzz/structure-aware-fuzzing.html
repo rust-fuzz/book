@@ -1,0 +1,391 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Structure-Aware Fuzzing - Rust Fuzz Book</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Guide on how to fuzz test software written in the Rust programming language">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div id="sidebar-scrollbox" class="sidebar-scrollbox">
+                <ol class="chapter"><li class="expanded affix "><a href="../introduction.html">Introduction</a></li><li class="expanded "><a href="../cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="expanded "><a href="../cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="expanded "><a href="../cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="expanded "><a href="../cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="expanded "><a href="../cargo-fuzz/structure-aware-fuzzing.html" class="active"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="expanded "><a href="../cargo-fuzz/targets.html"><strong aria-hidden="true">1.5.</strong> Targets</a></li></ol></li><li class="expanded "><a href="../afl.html"><strong aria-hidden="true">2.</strong> Fuzzing wth afl.rs</a></li><li><ol class="section"><li class="expanded "><a href="../afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="expanded "><a href="../afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li></ol></li><li class="expanded "><a href="../trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Rust Fuzz Book</h1>
+
+                        <div class="right-buttons">
+                            <a href="../print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#structure-aware-fuzzing" id="structure-aware-fuzzing">Structure-Aware Fuzzing</a></h1>
+<p>Not every fuzz target wants to take a buffer of raw bytes as input. We might
+want to only feed it well-formed instances of some structured data. Luckily, the
+<code>libfuzzer-sys</code> crate enables us to define fuzz targets that take any kind of type,
+as long as it implements <a href="https://docs.rs/arbitrary/*/arbitrary/trait.Arbitrary.html">the <code>Arbitrary</code> trait</a>.</p>
+<pre><code class="language-rust ignore">libfuzzer_sys::fuzz_target!(|input: AnyTypeThatImplementsArbitrary| {
+    // Use `input` here...
+})
+</code></pre>
+<p>The <code>arbitrary</code> crate implements <code>Arbitrary</code> for nearly all the types in <code>std</code>,
+including collections like <code>Vec</code> and <code>HashMap</code> as well as things like <code>String</code>
+and <code>PathBuf</code>.</p>
+<p>For convenience, the <code>libfuzzer-sys</code> crate re-exports the <code>arbitrary</code> crate as
+<code>libfuzzer_sys::arbitrary</code>. You can also enable <code>#[derive(Arbitrary)]</code> either by</p>
+<ul>
+<li>enabling the <code>arbitary</code> crate's <code>&quot;derive&quot;</code> feature, or</li>
+<li>(equivalently) enabling the <code>libfuzzer-sys</code> crate's <code>&quot;arbitrary-derive&quot;</code> feature.</li>
+</ul>
+<p><a href="https://docs.rs/arbitrary">See the <code>arbitrary</code> crate's documentation for more details.</a></p>
+<p>This section concludes with two examples of structure-aware fuzzing:</p>
+<ol>
+<li>
+<p><a href="#example-1-fuzzing-color-conversions">Example 1: Fuzzing Color Conversions</a></p>
+</li>
+<li>
+<p><a href="#example-2-fuzzing-allocator-api-calls">Example 2: Fuzzing Allocation API Calls</a></p>
+</li>
+</ol>
+<h2><a class="header" href="#example-1-fuzzing-color-conversions" id="example-1-fuzzing-color-conversions">Example 1: Fuzzing Color Conversions</a></h2>
+<p>Let's say we are working on a color conversion library that can turn RGB colors
+into HSL and back again.</p>
+<h3><a class="header" href="#enable-deriving-arbitrary" id="enable-deriving-arbitrary">Enable Deriving <code>Arbitrary</code></a></h3>
+<p>We are lazy, and don't want to implement <code>Arbitrary</code> by hand, so we want to
+enable the <code>arbitrary</code> crate's <code>&quot;derive&quot;</code> cargo feature. This lets us get
+automatic <code>Arbitrary</code> implementations with <code>#[derive(Arbitrary)]</code>.</p>
+<p>Because the <code>Rgb</code> type we will be deriving <code>Arbitrary</code> for is in our main color
+conversion crate, we add this to our main <code>Cargo.toml</code>.</p>
+<pre><code class="language-toml"># Cargo.toml
+
+[dependencies]
+arbitrary = { version = &quot;0.3.0&quot;, optional = &quot;true&quot;, features = [&quot;derive&quot;] }
+</code></pre>
+<h3><a class="header" href="#derive-arbitrary-for-our-rgb-type" id="derive-arbitrary-for-our-rgb-type">Derive <code>Arbitrary</code> for our <code>Rgb</code> Type</a></h3>
+<p>In our main crate, when the <code>&quot;arbitrary&quot;</code> cargo feature is enabled, we derive
+the <code>Arbitrary</code> trait:</p>
+<pre><code class="language-rust ignore">// src/lib.rs
+
+#[derive(Clone, Debug)]
+#[cfg_attr(feature = &quot;arbitrary&quot;, derive(arbitrary::Arbitrary))]
+pub struct Rgb {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+}
+</code></pre>
+<h3><a class="header" href="#enable-the-main-projects-arbitrary-cargo-feature-for-the-fuzz-targets" id="enable-the-main-projects-arbitrary-cargo-feature-for-the-fuzz-targets">Enable the Main Project's <code>&quot;arbitrary&quot;</code> Cargo Feature for the Fuzz Targets</a></h3>
+<p>Because we made <code>arbitrary</code> an optional dependency in our main color conversion
+crate, we need to enable that feature for our fuzz targets to use it.</p>
+<pre><code class="language-toml"># fuzz/Cargo.toml
+
+[dependencies]
+my_color_conversion_library = { path = &quot;..&quot;, features = [&quot;arbitrary&quot;] }
+</code></pre>
+<h3><a class="header" href="#add-the-fuzz-target" id="add-the-fuzz-target">Add the Fuzz Target</a></h3>
+<p>We need to add a new fuzz target to our project:</p>
+<pre><code class="language-sh">$ cargo fuzz add rgb_to_hsl_and_back
+</code></pre>
+<h3><a class="header" href="#implement-the-fuzz-target" id="implement-the-fuzz-target">Implement the Fuzz Target</a></h3>
+<p>Finally, we can implement our fuzz target that takes arbitrary RGB colors,
+converts them to HSL, and then converts them back to RGB and asserts that we get
+the same color as the original! Because we implement <code>Arbitrary</code> for our <code>Rgb</code>
+type, our fuzz target can take instances of <code>Rgb</code> directly:</p>
+<pre><code class="language-rust ignore">// fuzz/fuzz_targets/rgb_to_hsl_and_back.rs
+
+libfuzzer_sys::fuzz_target!(|color: Rgb| {
+    let hsl = color.to_hsl();
+    let rgb = hsl.to_rgb();
+
+    // This should be true for all RGB -&gt; HSL -&gt; RGB conversions!
+    assert_eq!(color, rgb);
+});
+</code></pre>
+<h2><a class="header" href="#example-2-fuzzing-allocator-api-calls" id="example-2-fuzzing-allocator-api-calls">Example 2: Fuzzing Allocator API Calls</a></h2>
+<p>Imagine, for example, that we are fuzzing our own <code>malloc</code> and <code>free</code>
+implementation. We want to make a sequence of valid allocation and deallocation
+API calls. Additionally, we want that sequence to be guided by the fuzzer, so it
+can use its insight into code coverage to maximize the amount of code we
+exercise during fuzzing.</p>
+<h3><a class="header" href="#add-the-fuzz-target-1" id="add-the-fuzz-target-1">Add the Fuzz Target</a></h3>
+<p>First, we add a new fuzz target to our project:</p>
+<pre><code class="language-sh">$ cargo fuzz add fuzz_malloc_free
+</code></pre>
+<h3><a class="header" href="#enable-deriving-arbitrary-1" id="enable-deriving-arbitrary-1">Enable Deriving <code>Arbitrary</code></a></h3>
+<p>Like the color conversion example above, we don't want to write our <code>Arbitrary</code>
+implementation by hand, we want to derive it.</p>
+<pre><code class="language-toml"># fuzz/Cargo.toml
+
+[dependencies]
+libfuzzer-sys = { version = &quot;0.2.0&quot;, features = [&quot;arbitrary-derive&quot;] }
+</code></pre>
+<h3><a class="header" href="#define-an-allocatormethod-type-and-derive-arbitrary" id="define-an-allocatormethod-type-and-derive-arbitrary">Define an <code>AllocatorMethod</code> Type and Derive <code>Arbitrary</code></a></h3>
+<p>Next, we define an <code>enum</code> that represents either a <code>malloc</code>, a <code>realloc</code>, or a
+<code>free</code>:</p>
+<pre><code class="language-rust ignore">// fuzz_targets/fuzz_malloc_free.rs
+
+use libfuzzer_sys::arbitrary::Arbitrary;
+
+#[derive(Arbitrary, Debug)]
+enum AllocatorMethod {
+    Malloc {
+        // The size of allocation to make.
+        size: usize,
+    },
+    Free {
+        // Free the index^th allocation we've made.
+        index: usize
+    },
+    Realloc {
+        // We will realloc the index^th allocation we've made.
+        index: usize,
+        // The new size of the allocation.
+        new_size: usize,
+    },
+}
+</code></pre>
+<h3><a class="header" href="#write-a-fuzz-target-that-takes-a-sequence-of-allocatormethods" id="write-a-fuzz-target-that-takes-a-sequence-of-allocatormethods">Write a Fuzz Target That Takes a Sequence of <code>AllocatorMethod</code>s</a></h3>
+<p>Finally, we write a fuzz target that takes a vector of <code>AllocatorMethod</code>s and
+interprets them by making the corresponding <code>malloc</code>, <code>realloc</code>, and <code>free</code>
+calls. This works because <code>Vec&lt;T&gt;</code> implements <code>Arbitrary</code> when <code>T</code> implements
+<code>Arbitrary</code>.</p>
+<pre><code class="language-rust ignore">// fuzz/fuzz_targets/fuzz_malloc_free.rs
+
+libfuzzer_sys::fuzz_target!(|methods: Vec&lt;AllocatorMethod&gt;| {
+    let mut allocs = vec![];
+
+    // Interpret the fuzzer-provided methods and make the
+    // corresponding allocator API calls.
+    for method in methods {
+        match method {
+            AllocatorMethod::Malloc { size } =&gt; {
+                let ptr = my_allocator::malloc(size);
+                allocs.push(ptr);
+            }
+            AllocatorMethod::Free { index } =&gt; {
+                match allocs.get(index) {
+                    Some(ptr) if !ptr.is_null() =&gt; {
+                        my_allocator::free(ptr);
+                        allocs[index] = std::ptr::null();
+                    }
+                    _ =&gt; {}
+                }
+            }
+            AllocatorMethod::Realloc { index, size } =&gt; {
+                match allocs.get(index) {
+                    Some(ptr) if !ptr.is_null() =&gt; {
+                        let new_ptr = my_allocator::realloc(ptr, size);
+                        allocs[index] = new_ptr;
+                    }
+                    _ =&gt; {}
+                }
+            }
+        }
+    }
+
+    // Free any remaining allocations.
+    for ptr in allocs {
+        if !ptr.is_null() =&gt; {
+            my_allocator::free(ptr);
+        }
+    }
+});
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="../cargo-fuzz/guide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="../cargo-fuzz/targets.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="../cargo-fuzz/guide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="../cargo-fuzz/targets.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
