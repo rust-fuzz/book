@@ -47,7 +47,7 @@ conversion crate, we add this to our main `Cargo.toml`.
 # Cargo.toml
 
 [dependencies]
-arbitrary = { version = "0.3.0", optional = "true", features = ["derive"] }
+arbitrary = { version = "0.3.0", optional = true, features = ["derive"] }
 ```
 
 ### Derive `Arbitrary` for our `Rgb` Type

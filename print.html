@@ -289,7 +289,7 @@ conversion crate, we add this to our main <code>Cargo.toml</code>.</p>
 <pre><code class="language-toml"># Cargo.toml
 
 [dependencies]
-arbitrary = { version = &quot;0.3.0&quot;, optional = &quot;true&quot;, features = [&quot;derive&quot;] }
+arbitrary = { version = &quot;0.3.0&quot;, optional = true, features = [&quot;derive&quot;] }
 </code></pre>
 <h3><a class="header" href="#derive-arbitrary-for-our-rgb-type" id="derive-arbitrary-for-our-rgb-type">Derive <code>Arbitrary</code> for our <code>Rgb</code> Type</a></h3>
 <p>In our main crate, when the <code>&quot;arbitrary&quot;</code> cargo feature is enabled, we derive
