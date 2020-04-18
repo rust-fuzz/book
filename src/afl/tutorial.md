@@ -20,8 +20,8 @@ So add these to the `Cargo.toml` file:
 
 ```toml
 [dependencies]
-afl = "0.4"
-url = "1.0"
+afl = "*"
+url = "*"
 ```
 
 Now we’ll need to write the source for the fuzz target in `src/main.rs`:
