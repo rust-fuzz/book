@@ -3,8 +3,8 @@
 mv -f book/* .
 
 git init
-git config user.name "Rust-Fuzz GitHub Action"
-git config user.email "no-reply@fake.com"
+git config user.name "Corey Farwell"
+git config user.email "coreyf@rwell.org"
 
 git remote add upstream "https://$GH_TOKEN@github.com/rust-fuzz/book.git"
 git fetch upstream
