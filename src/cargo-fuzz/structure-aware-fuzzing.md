@@ -47,7 +47,7 @@ conversion crate, we add this to our main `Cargo.toml`.
 # Cargo.toml
 
 [dependencies]
-arbitrary = { version = "0.3.0", optional = true, features = ["derive"] }
+arbitrary = { version = "1", optional = true, features = ["derive"] }
 ```
 
 ### Derive `Arbitrary` for our `Rgb` Type
@@ -131,7 +131,7 @@ implementation by hand, we want to derive it.
 # fuzz/Cargo.toml
 
 [dependencies]
-libfuzzer-sys = { version = "0.2.0", features = ["arbitrary-derive"] }
+libfuzzer-sys = { version = "0.4.0", features = ["arbitrary-derive"] }
 ```
 
 ### Define an `AllocatorMethod` Type and Derive `Arbitrary`
