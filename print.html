@@ -97,7 +97,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/targets.html"><strong aria-hidden="true">1.5.</strong> Targets</a></li></ol></li><li class="chapter-item expanded "><a href="afl.html"><strong aria-hidden="true">2.</strong> Fuzzing wth afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li></ol></li><li class="chapter-item expanded "><a href="trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/coverage.html"><strong aria-hidden="true">1.5.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/targets.html"><strong aria-hidden="true">1.6.</strong> Targets</a></li></ol></li><li class="chapter-item expanded "><a href="afl.html"><strong aria-hidden="true">2.</strong> Fuzzing wth afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li></ol></li><li class="chapter-item expanded "><a href="trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -437,6 +437,68 @@ libfuzzer_sys::fuzz_target!(|methods: Vec&lt;AllocatorMethod&gt;| {
     }
 });
 </code></pre>
+<h1 id="code-coverage"><a class="header" href="#code-coverage">Code Coverage</a></h1>
+<p>Visualizing code coverage helps you understand which code paths are being fuzzed
+and — more importantly — which aren't. To help the fuzzer exercise
+new code paths, you can look at what it is failing to reach and then either add
+new seed inputs to the corpus, or tweak the fuzz target. This chapter describes
+how to generate coverage reports for your fuzz target and its current corpus.</p>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<p>First, install the LLVM-coverage tools as described in the <a href="https://doc.rust-lang.org/beta/unstable-book/compiler-flags/source-based-code-coverage.html#installing-llvm-coverage-tools">Unstable
+book</a>.</p>
+<p>We recommend using at least LLVM 11 and a recent nightly version of the Rust
+toolchain. This code was tested with <code>1.51.0-nightly (2021-02-10)</code>.</p>
+<p>You must also have <code>cargo fuzz</code> version <code>0.10.0</code> or newer to use the <code>cargo fuzz coverage</code> subcommand.</p>
+<h2 id="generate-code-coverage-data"><a class="header" href="#generate-code-coverage-data">Generate Code-Coverage Data</a></h2>
+<p>After you fuzzed your program, use the <code>coverage</code> command to generate precise
+<a href="https://blog.rust-lang.org/inside-rust/2020/11/12/source-based-code-coverage.html">source-based code coverage</a> information:</p>
+<pre><code class="language-shell">$ cargo fuzz coverage &lt;target&gt; [corpus dirs] [-- &lt;args&gt;]
+</code></pre>
+<p>This command</p>
+<ul>
+<li>
+<p>compiles your project using the <code>-Zinstrument-coverage</code> Rust compiler flag,</p>
+</li>
+<li>
+<p>runs the program <em>without fuzzing</em> on the provided corpus (if no corpus
+directory is provided it uses <code>fuzz/corpus/&lt;target&gt;</code> by default),</p>
+</li>
+<li>
+<p>for each input file in the corpus, generates raw coverage data in the
+<code>fuzz/coverage/&lt;target&gt;/raw</code> subdirectory, and</p>
+</li>
+<li>
+<p>merges the raw files into a <code>coverage.profdata</code> file located in the
+<code>fuzz/coverage/&lt;target&gt;</code> subdirectory.</p>
+</li>
+</ul>
+<p>Afterwards, you can use the generated <code>coverage.profdata</code> file to generate
+coverage reports and visualize code-coverage information as described in the
+<a href="https://doc.rust-lang.org/beta/unstable-book/compiler-flags/source-based-code-coverage.html#creating-coverage-reports">Unstable book</a>.</p>
+<h2 id="example"><a class="header" href="#example">Example</a></h2>
+<p>Suppose we have a <code>my_compiler</code> fuzz target for which we want to visualize code
+coverage.</p>
+<ol>
+<li>
+<p>Run the fuzzer on the <code>my_compiler</code> target:</p>
+<pre><code class="language-shell">$ cargo fuzz run my_compiler
+</code></pre>
+</li>
+<li>
+<p>Produce code-coverage information:</p>
+<pre><code class="language-shell">$ cargo fuzz coverage my_compiler
+</code></pre>
+</li>
+<li>
+<p>Visualize the coverage data in HTML:</p>
+<pre><code class="language-shell">$ cargo cov -- show target/.../my_compiler \
+    --format=html \
+    -instr-profile=fuzz/coverage/my_compiler/coverage.profdata \
+    &gt; index.html
+</code></pre>
+<p>There are many visualization and coverage-report options available (see <code>llvm-cov show --help</code>).</p>
+</li>
+</ol>
 <h1 id="targets"><a class="header" href="#targets">Targets</a></h1>
 <p>A collection of community maintained cargo-fuzz compatible fuzz targets can be found <a href="https://github.com/rust-fuzz/targets">here</a>.</p>
 <h1 id="fuzzing-with-aflrs"><a class="header" href="#fuzzing-with-aflrs">Fuzzing with afl.rs</a></h1>

@@ -7,6 +7,7 @@
     * [Tutorial](./cargo-fuzz/tutorial.md)
     * [Guide](./cargo-fuzz/guide.md)
     * [Structure-Aware Fuzzing](./cargo-fuzz/structure-aware-fuzzing.md)
+    * [Coverage](./cargo-fuzz/coverage.md)
     * [Targets](./cargo-fuzz/targets.md)
 * [Fuzzing wth afl.rs](./afl.md)
     * [Setup](./afl/setup.md)
