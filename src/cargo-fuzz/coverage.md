@@ -63,7 +63,7 @@ coverage.
 2. Visualize the coverage data in HTML:
 
    ```shell
-   $ cargo cov -- show target/.../my_compiler \
+   $ cargo cov -- show fuzz/target/<target triple>/release/my_compiler \
        --format=html \
        -instr-profile=fuzz/coverage/my_compiler/coverage.profdata \
        > index.html
