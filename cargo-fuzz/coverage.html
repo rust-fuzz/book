@@ -171,9 +171,12 @@ new seed inputs to the corpus, or tweak the fuzz target. This chapter describes
 how to generate coverage reports for your fuzz target and its current corpus.</p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <p>First, install the LLVM-coverage tools as described in the <a href="https://doc.rust-lang.org/beta/unstable-book/compiler-flags/source-based-code-coverage.html#installing-llvm-coverage-tools">Unstable
-book</a>.</p>
+book</a>, as well as the <code>rust-src</code> component.</p>
 <p>We recommend using at least LLVM 11 and a recent nightly version of the Rust
 toolchain. This code was tested with <code>1.51.0-nightly (2021-02-10)</code>.</p>
+<p>If you are using a non-nightly toolchain as your default toolchain, remember to
+install the rustup components for the nightly toolchain instead of the default
+(<code>rustup component add --toolchain nightly llvm-tools-preview rust-src ...</code>).</p>
 <p>You must also have <code>cargo fuzz</code> version <code>0.10.0</code> or newer to use the <code>cargo fuzz coverage</code> subcommand.</p>
 <h2 id="generate-code-coverage-data"><a class="header" href="#generate-code-coverage-data">Generate Code-Coverage Data</a></h2>
 <p>After you fuzzed your program, use the <code>coverage</code> command to generate precise
@@ -217,7 +220,7 @@ coverage.</p>
 </li>
 <li>
 <p>Visualize the coverage data in HTML:</p>
-<pre><code class="language-shell">$ cargo cov -- show target/.../my_compiler \
+<pre><code class="language-shell">$ cargo cov -- show fuzz/target/&lt;target triple&gt;/release/my_compiler \
     --format=html \
     -instr-profile=fuzz/coverage/my_compiler/coverage.profdata \
     &gt; index.html
