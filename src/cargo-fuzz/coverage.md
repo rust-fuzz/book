@@ -9,10 +9,14 @@ how to generate coverage reports for your fuzz target and its current corpus.
 ## Prerequisites
 
 First, install the LLVM-coverage tools as described in the [Unstable
-book][install-cov-tools].
+book][install-cov-tools], as well as the `rust-src` component.
 
 We recommend using at least LLVM 11 and a recent nightly version of the Rust
 toolchain. This code was tested with `1.51.0-nightly (2021-02-10)`.
+
+If you are using a non-nightly toolchain as your default toolchain, remember to
+install the rustup components for the nightly toolchain instead of the default
+(`rustup component add --toolchain nightly llvm-tools-preview rust-src ...`).
 
 You must also have `cargo fuzz` version `0.10.0` or newer to use the `cargo fuzz
 coverage` subcommand.
@@ -63,7 +67,7 @@ coverage.
 2. Visualize the coverage data in HTML:
 
    ```shell
-   $ cargo cov -- show target/.../my_compiler \
+   $ cargo cov -- show fuzz/target/<target triple>/release/my_compiler \
        --format=html \
        -instr-profile=fuzz/coverage/my_compiler/coverage.profdata \
        > index.html
