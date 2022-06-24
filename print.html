@@ -170,6 +170,7 @@
 <p><a href="https://www.rust-lang.org/">Rust</a> is a high performance, safe, general purpose programming language.</p>
 <p>This book demonstrates how to perform fuzz testing for software written in Rust.</p>
 <p>There are two tools for fuzzing Rust code documented in this book: <strong><a href="afl.html">afl.rs</a></strong> and <strong><a href="cargo-fuzz.html">cargo-fuzz</a></strong>.</p>
+<p>The source of this book is available on GitHub at <a href="https://github.com/rust-fuzz/book">https://github.com/rust-fuzz/book</a>.</p>
 <h1 id="fuzzing-with-cargo-fuzz"><a class="header" href="#fuzzing-with-cargo-fuzz">Fuzzing with cargo-fuzz</a></h1>
 <p><a href="https://github.com/rust-fuzz/cargo-fuzz">cargo-fuzz</a> is the recommended tool for fuzz testing Rust code.</p>
 <p>cargo-fuzz is itself not a fuzzer, but a tool to invoke a fuzzer. Currently, the only fuzzer it supports is <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> (through the <a href="https://github.com/rust-fuzz/libfuzzer-sys">libfuzzer-sys</a> crate), but it could be extended to <a href="https://github.com/rust-fuzz/cargo-fuzz/issues/1">support other fuzzers in the future</a>.</p>
