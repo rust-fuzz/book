@@ -8,6 +8,8 @@ This book demonstrates how to perform fuzz testing for software written in Rust.
 
 There are two tools for fuzzing Rust code documented in this book: **[afl.rs]** and **[cargo-fuzz]**.
 
+The source of this book is available on GitHub at <https://github.com/rust-fuzz/book>.
+
 [Fuzz testing]: https://en.wikipedia.org/wiki/Fuzz_testing
 [Rust]: https://www.rust-lang.org/
 [cargo-fuzz]: cargo-fuzz.html
