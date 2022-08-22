@@ -8,15 +8,11 @@ how to generate coverage reports for your fuzz target and its current corpus.
 
 ## Prerequisites
 
-First, install the LLVM-coverage tools as described in the [Unstable
-book][install-cov-tools], as well as the `rust-src` component.
-
-We recommend using at least LLVM 11 and a recent nightly version of the Rust
-toolchain. This code was tested with `1.51.0-nightly (2021-02-10)`.
+First, install the LLVM-coverage tools as described in the [rustc book][install-cov-tools].
 
 If you are using a non-nightly toolchain as your default toolchain, remember to
 install the rustup components for the nightly toolchain instead of the default
-(`rustup component add --toolchain nightly llvm-tools-preview rust-src ...`).
+(`rustup component add --toolchain nightly llvm-tools-preview ...`).
 
 You must also have `cargo fuzz` version `0.10.0` or newer to use the `cargo fuzz
 coverage` subcommand.
@@ -32,7 +28,7 @@ $ cargo fuzz coverage <target> [corpus dirs] [-- <args>]
 
 This command
 
-- compiles your project using the `-Zinstrument-coverage` Rust compiler flag,
+- compiles your project using the `-Cinstrument-coverage` Rust compiler flag,
 
 - runs the program _without fuzzing_ on the provided corpus (if no corpus
   directory is provided it uses `fuzz/corpus/<target>` by default),
@@ -45,7 +41,7 @@ This command
 
 Afterwards, you can use the generated `coverage.profdata` file to generate
 coverage reports and visualize code-coverage information as described in the
-[Unstable book][create-reports].
+[rustc book][create-reports].
 
 ## Example
 
@@ -75,6 +71,7 @@ coverage.
 
    There are many visualization and coverage-report options available (see `llvm-cov show --help`).
 
-[install-cov-tools]: https://doc.rust-lang.org/beta/unstable-book/compiler-flags/source-based-code-coverage.html#installing-llvm-coverage-tools
+[install-cov-tools]: https://doc.rust-lang.org/stable/rustc/instrument-coverage.html#installing-llvm-coverage-tools
 [source-based-code-cov]: https://blog.rust-lang.org/inside-rust/2020/11/12/source-based-code-coverage.html
-[create-reports]: https://doc.rust-lang.org/beta/unstable-book/compiler-flags/source-based-code-coverage.html#creating-coverage-reports
+[create-reports]: https://doc.rust-lang.org/stable/rustc/instrument-coverage.html#running-the-instrumented-binary-to-generate-raw-coverage-profiling-data
+
