@@ -176,7 +176,15 @@
 <p>cargo-fuzz is itself not a fuzzer, but a tool to invoke a fuzzer. Currently, the only fuzzer it supports is <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a> (through the <a href="https://github.com/rust-fuzz/libfuzzer-sys">libfuzzer-sys</a> crate), but it could be extended to <a href="https://github.com/rust-fuzz/cargo-fuzz/issues/1">support other fuzzers in the future</a>.</p>
 <h1 id="setup"><a class="header" href="#setup">Setup</a></h1>
 <h2 id="requirements"><a class="header" href="#requirements">Requirements</a></h2>
-<p>libFuzzer needs LLVM sanitizer support, so this only works on x86-64 Linux, x86-64 macOS and Apple-Silicon (aarch64) macOS for now. This also needs a nightly compiler since it uses some unstable command-line flags. You'll also need a C++ compiler with C++11 support.</p>
+<p>libFuzzer needs LLVM sanitizer support, so this only works on x86-64 Linux, x86-64 macOS and Apple-Silicon (aarch64) macOS for now. Requires a C++ compiler with C++11 support. Rust provides multiple compilers. This project requires the nightly compiler since it uses the <code>-Z</code> compiler flag to provide address sanitization. Assuming you used <a href="https://github.com/rust-lang/rustup">rustup</a> to install Rust, you can check your default compiler with:</p>
+<pre><code class="language-shell">$ rustup default
+stable-x86_64-unknown-linux-gnu (default) # Not the compiler we want.
+</code></pre>
+<p>To change to the nightly compiler:</p>
+<pre><code class="language-shell">$ rustup install nightly
+$ rustup default nightly
+nightly-x86_64-unknown-linux-gnu (default) # The correct compiler.
+</code></pre>
 <h2 id="installing"><a class="header" href="#installing">Installing</a></h2>
 <pre><code class="language-sh">cargo install cargo-fuzz
 </code></pre>
