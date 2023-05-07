@@ -102,3 +102,13 @@ AFL will run indefinitely, so if you want to quit, press `CTRL-C`.
 
 [`Url::parse`]: https://docs.rs/url/*/url/struct.Url.html#method.parse
 [rust-url]: https://github.com/servo/rust-url
+
+## Reproducing
+
+Once you have a few crashes collected from running your fuzzer, you can reproduce them by passing them in manually to your test case. This is typically done via `stdin`. E.g. for `url-fuzz-target` the command would be:
+
+```sh
+cargo afl run url-fuzz-target < out/default/crashes/crash_file
+```
+
+where `out` is the `-o` parameter from your fuzz command and `crash_file` is an arbitrary file in the `crashes` directory.
