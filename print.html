@@ -586,6 +586,11 @@ echo &quot;http://www.example.com:80/foo?hi=bar&quot; &gt; in/url3
 <p><img src="https://raw.githubusercontent.com/rust-fuzz/afl.rs/master/etc/screencap.gif" alt="" /></p>
 <p>For more information about this UI and what each of the sections mean, see <a href="http://lcamtuf.coredump.cx/afl/status_screen.txt">this resource hosted on the AFL website</a>.</p>
 <p>AFL will run indefinitely, so if you want to quit, press <code>CTRL-C</code>.</p>
+<h2 id="reproducing"><a class="header" href="#reproducing">Reproducing</a></h2>
+<p>Once you have a few crashes collected from running your fuzzer, you can reproduce them by passing them in manually to your test case. This is typically done via <code>stdin</code>. E.g. for <code>url-fuzz-target</code> the command would be:</p>
+<pre><code class="language-sh">cargo afl run url-fuzz-target &lt; out/default/crashes/crash_file
+</code></pre>
+<p>where <code>out</code> is the <code>-o</code> parameter from your fuzz command and <code>crash_file</code> is an arbitrary file in the <code>crashes</code> directory.</p>
 <h1 id="trophy-case"><a class="header" href="#trophy-case">Trophy Case</a></h1>
 <p>A collection of bugs found in Rust code through fuzz testing can be found in <a href="https://github.com/rust-fuzz/trophy-case">the trophy-case repository</a>.</p>
 
