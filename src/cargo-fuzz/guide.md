@@ -32,7 +32,7 @@ When you run `cargo fuzz <fuzz target name> <crash file>`, every crate is compil
 
 ```rust
 #[cfg(fuzzing_repro)]
-eprintln!("Input dat: {}", expensive_pretty_print(&data));
+eprintln!("Input data: {}", expensive_pretty_print(&data));
 ```
 
 ## libFuzzer configuration options
