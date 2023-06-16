@@ -177,6 +177,15 @@ unsafe = [&quot;project/unsafe&quot;]
 </code></pre>
 <h2 id="cfgfuzzing"><a class="header" href="#cfgfuzzing"><code>#[cfg(fuzzing)]</code></a></h2>
 <p>Every crate instrumented for fuzzing -- the <code>fuzz_targets</code> crate, the project crate, and their entire dependency tree -- is compiled with the <code>--cfg fuzzing</code> rustc option. This makes it possible to disable code paths that prevent fuzzing from working, e.g. verification of cryptographic signatures, with a simple <code>#[cfg(not(fuzzing))]</code>, and without the need for an externally visible Cargo feature that must be maintained throughout every dependency.</p>
+<h2 id="cfgfuzzing_repro"><a class="header" href="#cfgfuzzing_repro"><code>#[cfg(fuzzing_repro)]</code></a></h2>
+<p>When you run <code>cargo fuzz &lt;fuzz target name&gt; &lt;crash file&gt;</code>, every crate is compiled with the <code>--cfg fuzzing_repro</code> rustc option. This allows you to leave debugging statements in your fuzz targets behind a <code>#[cfg(fuzzing_repro)]</code>:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[cfg(fuzzing_repro)]
+eprintln!(&quot;Input data: {}&quot;, expensive_pretty_print(&amp;data));
+<span class="boring">}
+</span></code></pre></pre>
 <h2 id="libfuzzer-configuration-options"><a class="header" href="#libfuzzer-configuration-options">libFuzzer configuration options</a></h2>
 <p>See all the libFuzzer options:</p>
 <pre><code class="language-sh">cargo fuzz run &lt;fuzz target name&gt; -- -help=1
