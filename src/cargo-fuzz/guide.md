@@ -28,7 +28,7 @@ Every crate instrumented for fuzzing -- the `fuzz_targets` crate, the project cr
 
 ## `#[cfg(fuzzing_repro)]`
 
-When you run `cargo fuzz <fuzz target name> <crash file>`, every crate is compiled with the `--cfg fuzzing_repro` rustc option. This allows you to leave debugging statements in your fuzz targets behind a `#[cfg(fuzzing_repro)]`:
+When you run `cargo fuzz run <fuzz target name> <crash file>`, every crate is compiled with the `--cfg fuzzing_repro` rustc option. This allows you to leave debugging statements in your fuzz targets behind a `#[cfg(fuzzing_repro)]`:
 
 ```rust
 #[cfg(fuzzing_repro)]
