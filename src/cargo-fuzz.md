@@ -6,5 +6,5 @@ cargo-fuzz is itself not a fuzzer, but a tool to invoke a fuzzer. Currently, the
 
 [cargo-fuzz]: https://github.com/rust-fuzz/cargo-fuzz
 [extending]: https://github.com/rust-fuzz/cargo-fuzz/issues/1
-[libfuzzer-sys]: https://github.com/rust-fuzz/libfuzzer-sys
+[libfuzzer-sys]: https://github.com/rust-fuzz/libfuzzer
 [libFuzzer]: http://llvm.org/docs/LibFuzzer.html
