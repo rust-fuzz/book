@@ -12,4 +12,5 @@
 * [Fuzzing with afl.rs](./afl.md)
     * [Setup](./afl/setup.md)
     * [Tutorial](./afl/tutorial.md)
+    * [Installing from source](./afl/installing-from-source.md)
 * [Trophy case](./trophy-case.md)
