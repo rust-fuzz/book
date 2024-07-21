@@ -97,7 +97,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/coverage.html"><strong aria-hidden="true">1.5.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/targets.html"><strong aria-hidden="true">1.6.</strong> Targets</a></li></ol></li><li class="chapter-item expanded "><a href="afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li></ol></li><li class="chapter-item expanded "><a href="trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/coverage.html"><strong aria-hidden="true">1.5.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/targets.html"><strong aria-hidden="true">1.6.</strong> Targets</a></li></ol></li><li class="chapter-item expanded "><a href="afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="afl/installing-from-source.html"><strong aria-hidden="true">2.3.</strong> Installing from source</a></li></ol></li><li class="chapter-item expanded "><a href="trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -523,6 +523,7 @@ coverage.</p>
 <p>afl.rs works on x86-64 Linux, x86-64 macOS, and ARM64 macOS.</p>
 <pre><code class="language-sh">cargo install cargo-afl
 </code></pre>
+<p>Alternatively, <code>cargo-afl</code> can be <a href="afl/installing-from-source.html">installed from source</a>.</p>
 <h2 id="upgrading-1"><a class="header" href="#upgrading-1">Upgrading</a></h2>
 <pre><code class="language-sh">cargo install --force cargo-afl
 </code></pre>
@@ -591,6 +592,24 @@ echo &quot;http://www.example.com:80/foo?hi=bar&quot; &gt; in/url3
 <pre><code class="language-sh">cargo afl run url-fuzz-target &lt; out/default/crashes/crash_file
 </code></pre>
 <p>where <code>out</code> is the <code>-o</code> parameter from your fuzz command and <code>crash_file</code> is an arbitrary file in the <code>crashes</code> directory.</p>
+<h1 id="installing-from-source"><a class="header" href="#installing-from-source">Installing from source</a></h1>
+<p>First, clone afl.rs:</p>
+<pre><code class="language-sh">git clone https://github.com/rust-fuzz/afl.rs
+cd afl.rs
+</code></pre>
+<p>Next, checkout afl.rs's submodule (<a href="https://github.com/AFLplusplus/AFLplusplus">AFL++</a>). Note that <code>--recursive</code> is not required.</p>
+<pre><code class="language-sh">git submodule update --init
+</code></pre>
+<p>Finally, install <code>cargo-afl</code>:</p>
+<pre><code class="language-sh">cargo install --path cargo-afl
+</code></pre>
+<h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
+<p>If <code>cargo-afl</code> is panicking, consider installing with <code>--debug</code> and running <code>cargo-afl</code> with <code>RUST_BACKTRACE=1</code>, e.g.:</p>
+<pre><code class="language-sh">cargo install --path cargo-afl --debug
+...
+RUST_BACKTRACE=1 cargo afl ...
+</code></pre>
+<p>Adding <code>--debug</code> to the <code>cargo install</code> command causes <code>cargo-afl</code> to produce more elaborate backtraces.</p>
 <h1 id="trophy-case"><a class="header" href="#trophy-case">Trophy Case</a></h1>
 <p>A collection of bugs found in Rust code through fuzz testing can be found in <a href="https://github.com/rust-fuzz/trophy-case">the trophy-case repository</a>.</p>
 
