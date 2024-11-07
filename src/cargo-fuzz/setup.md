@@ -2,7 +2,7 @@
 
 ## Requirements
 
-libFuzzer needs LLVM sanitizer support, so this only works on x86-64 Linux, x86-64 macOS and Apple-Silicon (aarch64) macOS for now. Requires a C++ compiler with C++11 support. Rust provides multiple compilers. This project requires the nightly compiler since it uses the `-Z` compiler flag to provide address sanitization. Assuming you used [rustup][rustup] to install Rust, you can check your default compiler with:
+libFuzzer needs LLVM sanitizer support; this works on x86-64 Linux, x86-64 macOS and Apple-Silicon (aarch64) macOS, and Windows (thanks to the [MSVC AddressSanitizer][msvc-asan]). Requires a C++ compiler with C++11 support. Rust provides multiple compilers. This project requires the nightly compiler since it uses the `-Z` compiler flag to provide address sanitization. Assuming you used [rustup][rustup] to install Rust, you can check your default compiler with:
 
 ```shell
 $ rustup default
@@ -30,3 +30,4 @@ cargo install --force cargo-fuzz
 ```
 
 [rustup]: https://github.com/rust-lang/rustup
+[msvc-asan]: https://learn.microsoft.com/en-us/cpp/sanitizers/asan
