@@ -1,0 +1,403 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Fuzzing DLLs - Rust Fuzz Book</title>
+        
+        
+
+
+        <!-- Custom HTML head -->
+        
+
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Guide on how to fuzz test software written in the Rust programming language">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        
+        <link rel="icon" href="../../favicon.svg">
+        
+        
+        <link rel="shortcut icon" href="../../favicon.png">
+        
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+        
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+        
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../../cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../../cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../../cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="../../cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="../../cargo-fuzz/coverage.html"><strong aria-hidden="true">1.5.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="../../cargo-fuzz/targets.html"><strong aria-hidden="true">1.6.</strong> Targets</a></li><li class="chapter-item expanded "><a href="../../cargo-fuzz/windows.html"><strong aria-hidden="true">1.7.</strong> Fuzzing on Windows</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../cargo-fuzz/windows/setup.html"><strong aria-hidden="true">1.7.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../../cargo-fuzz/windows/dll-fuzzing.html" class="active"><strong aria-hidden="true">1.7.2.</strong> Fuzzing DLLs</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../../afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../../afl/installing-from-source.html"><strong aria-hidden="true">2.3.</strong> Installing from source</a></li></ol></li><li class="chapter-item expanded "><a href="../../trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Rust Fuzz Book</h1>
+
+                    <div class="right-buttons">
+                        
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="fuzzing-windows-dlls"><a class="header" href="#fuzzing-windows-dlls">Fuzzing Windows DLLs</a></h1>
+<p>On Windows systems, shared libraries are called <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/setup-upgrade-and-drivers/dynamic-link-library"><strong>Dynamic Link
+Libraries</strong></a>
+(<strong>DLLs</strong>). Code can be compiled into a <code>.dll</code> file, which is then loaded in at
+run-time by other executables on the system.</p>
+<p>You might find yourself wanting to fuzz a Windows DLL. Like any other piece of
+software, a shared library would benefit from undergoing fuzzing. Currently,
+fuzzing a Windows DLL is possible, but <em>slightly</em> trickier. Read on!</p>
+<h2 id="how-do-i-build-and-fuzz-a-dll"><a class="header" href="#how-do-i-build-and-fuzz-a-dll">How do I Build and Fuzz a DLL?</a></h2>
+<p>Follow these steps to build your DLL for fuzzing and build your fuzzing targets
+to invoke it.</p>
+<h3 id="set-up-your-fuzzing-cargotoml"><a class="header" href="#set-up-your-fuzzing-cargotoml">Set up your Fuzzing <code>Cargo.toml</code></a></h3>
+<p>Add your DLL's Cargo project to your fuzzing <code>Cargo.toml</code> as an optional
+dependency:</p>
+<pre><code class="language-toml">[dependencies]
+# ...
+your_dll = { path = &quot;..&quot;, optional = true }
+# ...
+</code></pre>
+<p>Add a feature to your <code>Cargo.toml</code> that requires your DLL as a dependency. We
+want the DLL to be built <em>only</em> when this feature is enabled:</p>
+<pre><code class="language-toml">[features]
+# ...
+build_your_dll = [
+    &quot;dep:your_dll&quot;
+]
+# ...
+</code></pre>
+<p>Finally, create a fuzzing target in your <code>Cargo.toml</code> that requires this
+feature. This will be a &quot;dummy&quot; fuzzing target whose sole purpose is to build
+your DLL. It won't actually do any fuzzing; it's merely a way to have
+cargo-fuzz build your DLL with AddressSanitizer (and other) instrumentation.</p>
+<pre><code class="language-toml">[[bin]]
+name = &quot;build_your_dll&quot;
+path = &quot;fuzz_targets/build_your_dll.rs&quot;
+required-features = [&quot;build_your_dll&quot;]
+test = false
+doc = false
+bench = false
+</code></pre>
+<h3 id="create-the-dummy-fuzzing-target"><a class="header" href="#create-the-dummy-fuzzing-target">Create the &quot;Dummy&quot; Fuzzing Target</a></h3>
+<p>Next, you need to create the source code for this &quot;dummy&quot; fuzzing target
+(<code>fuzz_targets/build_your_dll.rs</code>). At its simplest, all you need to do is
+create a simple <code>main</code> function:</p>
+<pre><pre class="playground"><code class="language-rust">pub fn main()
+{
+    println!(&quot;DLL build complete!&quot;);
+}
+</code></pre></pre>
+<p>This &quot;dummy&quot; target will have its main function executed <em>after</em> the DLL build
+has completed, so if you'd like, you can add extra code here to perform any
+post-build installation or setup. (For example, perhaps you need to copy the
+built DLL to somewhere else on the system, in order for the fuzzing targets to
+find it.)</p>
+<h3 id="create-your-fuzzing-targets"><a class="header" href="#create-your-fuzzing-targets">Create your Fuzzing Targets</a></h3>
+<p>After that, it's cargo-fuzz business as usual: create your fuzzing targets in
+<code>Cargo.toml</code>, and have them load and invoke your DLL:</p>
+<pre><code class="language-toml">[[bin]]
+name = &quot;fuzz_your_dll_1&quot;
+path = &quot;fuzz_targets/fuzz_your_dll_1.rs&quot;
+test = false
+doc = false
+bench = false
+</code></pre>
+<h3 id="build-the-dll-and-run"><a class="header" href="#build-the-dll-and-run">Build the DLL and Run</a></h3>
+<p>To build the DLL, then run a fuzzing target, there are two separate commands
+you need to invoke:</p>
+<pre><code class="language-powershell"># Build the DLL with your &quot;dummy&quot; target
+cargo fuzz run --features=build_your_dll --no-include-main-msvc --strip-dead-code build_your_dll
+</code></pre>
+<p>(See the <a href="#Technical-Details">&quot;Technical Details&quot;</a> for more information on why
+these options are needed.)</p>
+<pre><code class="language-powershell"># Run your fuzzing target, now that your DLL is built
+cargo fuzz run fuzz_your_dll_1
+</code></pre>
+<h2 id="technical-details"><a class="header" href="#technical-details">Technical Details</a></h2>
+<details>
+<summary>
+(Why do we have to fuzz DLLs this way? Click here to see some details.)
+</summary>
+<p>Code that is fuzzed through cargo-fuzz must be compiled with extra
+instrumentation inserted. The binary that is produced behaves normally, but
+executes additional code that cargo-fuzz (which uses
+<a href="https://llvm.org/docs/LibFuzzer.html">LibFuzzer</a> under the hood) can use to
+recieve feedback about how the target program behaved when given inputs from the
+fuzzer. In this way, a fuzzing &quot;feedback loop&quot; is established, and the fuzzer
+can slowly generate more &quot;interesting&quot; inputs that create new behavior in the
+target program.</p>
+<p>In our case, the target program is a Windows DLL. Because it's a DLL
+(shared library), it must be built and instrumented as a completely separate
+binary (a <code>.dll</code> file) from any fuzzing target executable (<code>.exe</code>) we've
+developed to test it. Your fuzzing target programs
+(<code>..../fuzz/fuzz_target/*.rs</code>) are calling functions from this DLL, but the
+actual loading of those functions into the same process will occur at run-time.</p>
+<p>So, there are two steps that need to be done when building (hence the two
+separate <code>cargo fuzz run ...</code> commands listed above):</p>
+<ol>
+<li>Build the DLL and install it.</li>
+<li>Build the fuzzing targets.</li>
+</ol>
+<h3 id="msvc-and-libfuzzers-main-function"><a class="header" href="#msvc-and-libfuzzers-main-function">MSVC and LibFuzzer's <code>main</code> Function</a></h3>
+<p>On Windows, Rust uses the <a href="https://learn.microsoft.com/en-us/cpp/build/reference/compiling-a-c-cpp-program">MSVC compiler and
+linker</a>
+to build. The cargo-fuzz fuzzing targets do not implement a <code>main</code> function;
+instead, they use LibFuzzer's built-in <code>main</code> function. (This function is what
+actually starts up the fuzzer. The fuzzer then invokes the <code>fuzz_target!()</code>
+macro function defined in each fuzzing target.) The MSVC linker does not
+seem to recognize the LibFuzzer <code>main</code> function, and thus cannot build the
+fuzzing targets without a little help.</p>
+<p>To fix the problem, cargo-fuzz code adds
+the <code>/include:main</code> linker argument to the build arguments passed to <code>cargo build</code> when it detects systems that are building with MSVC. This arguments
+forces the inclusion of an external <code>main</code> symbol in the executables produced by
+MSVC. (See more on the <code>/include</code> argument
+<a href="https://learn.microsoft.com/en-us/cpp/build/reference/include-force-symbol-references">here</a>.)
+This allows the fuzzing targets to build.</p>
+<h3 id="adding-includemain-breaks-dll-linking"><a class="header" href="#adding-includemain-breaks-dll-linking">Adding <code>/include:main</code> breaks DLL Linking</a></h3>
+<p>But hang on a second! DLLs by nature are shared libraries, and thus should not
+have any references to a <code>main</code> function. It's the job of the executable that
+loads a DLL into worry about <code>main</code>. So, if we attempt to build a DLL using
+<code>cargo fuzz build</code>, it'll add the <code>/include:main</code>, and we'll get a linker error:</p>
+<pre><code class="language-txt">LINK : error LNK2001: unresolved external symbol main
+C:/..../my_shared_library.dll : fatal error LNK1120: 1 unresolved externals
+</code></pre>
+<p>To avoid this, we use the <code>--no-include-main-msvc</code> argument, which allows us to
+control whether or not <code>/include:main</code> is added to the MSVC linker arguments.</p>
+<h3 id="but-removing-includemain-breaks-fuzzing-target-linking"><a class="header" href="#but-removing-includemain-breaks-fuzzing-target-linking">But removing <code>/include:main</code> breaks Fuzzing Target Linking</a></h3>
+<p>However... we need <code>/include:main</code> to build the fuzzing target executables. This
+puts us at a bit of an impasse:</p>
+<ul>
+<li>If we add <code>/include:main</code>, the fuzzing targets will build, but the DLL will
+not.</li>
+<li>If we remove <code>/include:main</code>, the DLL will build, but the fuzzing targets will
+not.</li>
+</ul>
+<h3 id="solution-two-separate-builds"><a class="header" href="#solution-two-separate-builds">Solution: Two Separate Builds</a></h3>
+<p>To solve this, we need to invoke <code>cargo fuzz ...</code> twice: once to build the DLL
+(<em>without</em> <code>/include:main</code>), and another time to build the fuzzing targets
+(<em>with</em> <code>/include:main</code>). In order to build the DLL using cargo-fuzz (which we
+want to do, because it builds using all the relevant LLVM coverage and
+AddressSanitizer compiler options), we implement a small &quot;dummy&quot; fuzzing target
+that provides its own <code>main</code> function.</p>
+<p>This &quot;dummy&quot; target does not implement a <code>fuzz_target!()</code> macro function (and
+thus, no actual fuzzing occurs), but it acts as a vehicle for us to build the
+Windows DLL for fuzzing. Plus, you can add any extra code to this &quot;dummy&quot; target
+to help install your newly-built DLL in the correct location on your Windows
+system.</p>
+<h3 id="why-use---strip-dead-code"><a class="header" href="#why-use---strip-dead-code">Why Use <code>--strip-dead-code</code>?</a></h3>
+<p>By default, cargo-fuzz invokes rustc with the <code>-Clink-dead-code</code> argument.
+This, as described
+<a href="https://doc.rust-lang.org/rustc/codegen-options/index.html#link-dead-code">here</a>,
+controls whether or not the linker is instructed to keep dead code. &quot;Dead code&quot;
+refers to functions/symbols that are provided by some dependency (such as a
+DLL) but aren't ever referenced/used by the program that's importing code from
+the dependency. This can be useful in some cases, but harmful in others.</p>
+<p>In the case of the certain DLLs, it may be harmful. By building with
+<code>-Clink-dead-code</code>, references to unused functions/symbols within various
+Windows DLLs your target DLL is dependent on would be included in the resulting
+binary when you build it with cargo-fuzz.</p>
+<p>For example: in <a href="https://github.com/microsoft/windows-rs">windows-rs</a>, the
+Cryptography sub-crate (<code>windows::Win32::Security::Cryptography</code>) includes
+symbols from <code>infocardapi.dll</code>). This DLL appears to no longer be supported, or
+even installed on Windows. If <code>-Clink-dead-code</code> were to cause these symbols to
+be included in your DLL, loading will fail at run-time when, inevitably, those
+symbol references can't be found, since <code>infocardapi.dll</code> is nowhere to be
+found on the system. (Your fuzzing target program will fail with
+<code>STATUS_DLL_NOT_FOUND</code>.)</p>
+<p>This issue can be fixed by adding <code>--strip-dead-code</code> to your cargo-fuzz
+command, which removes the usage of <code>-Clink-dead-code</code> when building.</p>
+</details>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="../../cargo-fuzz/windows/setup.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="../../afl.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="../../cargo-fuzz/windows/setup.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="../../afl.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
