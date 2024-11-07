@@ -159,9 +159,9 @@ have any references to a `main` function. It's the job of the executable that
 loads a DLL into worry about `main`. So, if we attempt to build a DLL using
 `cargo fuzz build`, it'll add the `/include:main`, and we'll get a linker error:
 
-```
+```txt
 LINK : error LNK2001: unresolved external symbol main
-C:\....\my_shared_library.dll : fatal error LNK1120: 1 unresolved externals
+C:/..../my_shared_library.dll : fatal error LNK1120: 1 unresolved externals
 ```
 
 To avoid this, we use the `--no-include-main-msvc` argument, which allows us to
