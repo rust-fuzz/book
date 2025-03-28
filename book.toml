@@ -1,3 +1,4 @@
+[book]
 title = "Rust Fuzz Book"
 description = "Guide on how to fuzz test software written in the Rust programming language"
-author = "Corey Farwell"
+authors = ["Corey Farwell"]
