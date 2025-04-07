@@ -178,8 +178,9 @@ cd url-fuzz-target
 <p>So add these to the <code>Cargo.toml</code> file:</p>
 <pre><code class="language-toml">[dependencies]
 afl = &quot;*&quot;
-url = &quot;*&quot;
+url = { git = &quot;https://github.com/servo/rust-url.git&quot;, rev = &quot;bfa167b4e0253642b6766a7aa74a99df60a94048&quot; }
 </code></pre>
+<p>We chose a particular revision of <code>url</code> that is known to have a bug. Your goal is to find it!</p>
 <p>Now we’ll need to write the source for the fuzz target in <code>src/main.rs</code>:</p>
 <pre><code class="language-rust ignore">#[macro_use]
 extern crate afl;
