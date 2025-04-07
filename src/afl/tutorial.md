@@ -21,8 +21,10 @@ So add these to the `Cargo.toml` file:
 ```toml
 [dependencies]
 afl = "*"
-url = "*"
+url = { git = "https://github.com/servo/rust-url.git", rev = "bfa167b4e0253642b6766a7aa74a99df60a94048" }
 ```
+
+We chose a particular revision of `url` that is known to have a bug. Your goal is to find it!
 
 Now we’ll need to write the source for the fuzz target in `src/main.rs`:
 
