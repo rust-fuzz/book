@@ -12,6 +12,7 @@
     * [Fuzzing on Windows](./cargo-fuzz/windows.md)
         * [Setup](./cargo-fuzz/windows/setup.md)
         * [Fuzzing DLLs](./cargo-fuzz/windows/dll-fuzzing.md)
+    * [Fuzzing in CI](./cargo-fuzz/ci.md)
 * [Fuzzing with afl.rs](./afl.md)
     * [Setup](./afl/setup.md)
     * [Tutorial](./afl/tutorial.md)
