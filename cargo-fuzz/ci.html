@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Targets - Rust Fuzz Book</title>
+        <title>Fuzzing in CI - Rust Fuzz Book</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/coverage.html"><strong aria-hidden="true">1.5.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/targets.html" class="active"><strong aria-hidden="true">1.6.</strong> Targets</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/windows.html"><strong aria-hidden="true">1.7.</strong> Fuzzing on Windows</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cargo-fuzz/windows/setup.html"><strong aria-hidden="true">1.7.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/windows/dll-fuzzing.html"><strong aria-hidden="true">1.7.2.</strong> Fuzzing DLLs</a></li></ol></li><li class="chapter-item expanded "><a href="../cargo-fuzz/ci.html"><strong aria-hidden="true">1.8.</strong> Fuzzing in CI</a></li></ol></li><li class="chapter-item expanded "><a href="../afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../afl/installing-from-source.html"><strong aria-hidden="true">2.3.</strong> Installing from source</a></li></ol></li><li class="chapter-item expanded "><a href="../trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/coverage.html"><strong aria-hidden="true">1.5.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/targets.html"><strong aria-hidden="true">1.6.</strong> Targets</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/windows.html"><strong aria-hidden="true">1.7.</strong> Fuzzing on Windows</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cargo-fuzz/windows/setup.html"><strong aria-hidden="true">1.7.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/windows/dll-fuzzing.html"><strong aria-hidden="true">1.7.2.</strong> Fuzzing DLLs</a></li></ol></li><li class="chapter-item expanded "><a href="../cargo-fuzz/ci.html" class="active"><strong aria-hidden="true">1.8.</strong> Fuzzing in CI</a></li></ol></li><li class="chapter-item expanded "><a href="../afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../afl/installing-from-source.html"><strong aria-hidden="true">2.3.</strong> Installing from source</a></li></ol></li><li class="chapter-item expanded "><a href="../trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -163,21 +163,78 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="targets"><a class="header" href="#targets">Targets</a></h1>
-<p>A collection of community maintained cargo-fuzz compatible fuzz targets can be found <a href="https://github.com/rust-fuzz/targets">here</a>.</p>
+                        <h1 id="fuzzing-in-ci"><a class="header" href="#fuzzing-in-ci">Fuzzing in CI</a></h1>
+<p>It can be helpful, as a smoke test, to build and run your fuzz targets for a
+small amount of time in CI.</p>
+<p>If your CI provider of choice is not listed here, feel free to send a PR adding
+it.</p>
+<h2 id="github-workflows"><a class="header" href="#github-workflows">GitHub Workflows</a></h2>
+<pre><code class="language-yaml">name: Smoke-Test Fuzz Targets
+
+on:
+  push:
+    branches: [ &quot;main&quot; ]
+  pull_request:
+    branches: [ &quot;main&quot; ]
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+
+    env:
+      # The version of `cargo-fuzz` to install and use.
+      CARGO_FUZZ_VERSION: 0.12.0
+
+      # The number of seconds to run the fuzz target. 300 seconds = 5 minutes.
+      FUZZ_TIME: 300
+
+    strategy:
+      matrix:
+        include:
+          # TODO: List your fuzz targets here.
+          - fuzz_target: my_first_fuzz_target
+          - fuzz_target: my_second_fuzz_target
+          # etc...
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Install the nightly Rust channel.
+    - run: rustup toolchain install nightly
+    - run: rustup default nightly
+
+    # Install and cache `cargo-fuzz`.
+    - uses: actions/cache@v4
+      with:
+        path: ${{ runner.tool_cache }}/cargo-fuzz
+        key: cargo-fuzz-bin-${{ env.CARGO_FUZZ_VERSION }}
+    - run: echo &quot;${{ runner.tool_cache }}/cargo-fuzz/bin&quot; &gt;&gt; $GITHUB_PATH
+    - run: cargo install --root &quot;${{ runner.tool_cache }}/cargo-fuzz&quot; --version ${{ env.CARGO_FUZZ_VERSION }} cargo-fuzz --locked
+
+    # Build and then run the fuzz target.
+    - run: cargo fuzz build ${{ matrix.fuzz_target }}
+    - run: cargo fuzz run ${{ matrix.fuzz_target }} -- -max_total_time=${{ env.FUZZ_TIME }}
+
+    # Upload fuzzing artifacts on failure for post-mortem debugging.
+    - uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: fuzzing-artifacts-${{ matrix.fuzz_target }}-${{ github.sha }}
+        path: fuzz/artifacts
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../cargo-fuzz/coverage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../cargo-fuzz/windows/dll-fuzzing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="../cargo-fuzz/windows.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../afl.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -189,13 +246,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="../cargo-fuzz/coverage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../cargo-fuzz/windows/dll-fuzzing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="../cargo-fuzz/windows.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../afl.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
