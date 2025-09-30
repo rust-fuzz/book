@@ -67,6 +67,8 @@ Since we want to build this crate, we’ll run:
 cargo afl build
 ```
 
+Like `cargo fuzz`, `cargo afl build` will provide the arguments `--cfg fuzzing` to build each crate in the dependency graph, which will enable any code paths annotated with `#[cfg(fuzzing)]`.
+
 ## Provide starting inputs
 
 AFL strictly requires starting inputs, and will not execute at all without being provided an input directory containing at least one example input. A high-quality input corpus contains many different examples of valid inputs which exercise different features of the parsing process being fuzzed. Further instruction on crafting an effective input corpus is available in the [AFL README], including discussion of the dictionary approach for highly verbose data formats such as HTML.
