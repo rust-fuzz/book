@@ -846,8 +846,10 @@ passes the bytes to the provided closure.</p>
 <p>Since we want to build this crate, we’ll run:</p>
 <pre><code class="language-sh">cargo afl build
 </code></pre>
+<p>Like <code>cargo fuzz</code>, <code>cargo afl build</code> will provide the arguments <code>--cfg fuzzing</code> to build each crate in the dependency graph, which will enable any code paths annotated with <code>#[cfg(fuzzing)]</code>.</p>
 <h2 id="provide-starting-inputs"><a class="header" href="#provide-starting-inputs">Provide starting inputs</a></h2>
-<p>AFL doesn't strictly require starting inputs, but providing some can make AFL’s job easier since it won’t need to ‘learn’ what a valid URL looks like. To do this, we'll create a directory called <code>in</code> with a few files (filenames don’t matter) containing valid URLs:</p>
+<p>AFL strictly requires starting inputs, and will not execute at all without being provided an input directory containing at least one example input. A high-quality input corpus contains many different examples of valid inputs which exercise different features of the parsing process being fuzzed. Further instruction on crafting an effective input corpus is available in the <a href="https://lcamtuf.coredump.cx/afl/README.txt">AFL README</a>, including discussion of the dictionary approach for highly verbose data formats such as HTML.</p>
+<p>For this tutorial, we won't be generating a high-quality corpus, but just enough to demonstrate the basic mechanism. To do this, we'll create a directory called <code>in</code> with a few files containing valid URLs:</p>
 <pre><code class="language-sh">mkdir in
 echo &quot;tcp://example.com/&quot; &gt; in/url
 echo &quot;ssh://192.168.1.1&quot; &gt; in/url2
@@ -858,7 +860,8 @@ echo &quot;http://www.example.com:80/foo?hi=bar&quot; &gt; in/url3
 <pre><code class="language-sh">cargo afl fuzz -i in -o out target/debug/url-fuzz-target
 </code></pre>
 <p>The <code>fuzz</code> subcommand of <code>cargo-afl</code> is the primary interface for fuzzing Rust code with AFL. For those already familiar with AFL, the <code>fuzz</code> subcommand of <code>cargo-afl</code> is identical to running <code>afl-fuzz</code>.</p>
-<p>The <code>-i</code> flag specifies a directory full of input files AFL will use as seeds.</p>
+<p>The <code>-i</code> flag specifies a directory containing input files AFL will use as seeds.</p>
+<p>Inputs can be filtered by their file extension with the <code>-e ext</code> flag.</p>
 <p>The <code>-o</code> flag specifies a directory AFL will write all its state and results to.</p>
 <p>The last argument <code>target/debug/url-fuzz-target</code> specifies the fuzz target binary AFL will call, supplying random bytes to standard input.</p>
 <p>As soon as you run this command, you should see AFL’s interface start up:</p>

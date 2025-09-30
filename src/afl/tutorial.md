@@ -67,9 +67,15 @@ Since we want to build this crate, we’ll run:
 cargo afl build
 ```
 
+Like `cargo fuzz`, `cargo afl build` will provide the arguments `--cfg fuzzing` to build each crate in the dependency graph, which will enable any code paths annotated with `#[cfg(fuzzing)]`.
+
 ## Provide starting inputs
 
-AFL doesn't strictly require starting inputs, but providing some can make AFL’s job easier since it won’t need to ‘learn’ what a valid URL looks like. To do this, we'll create a directory called `in` with a few files (filenames don’t matter) containing valid URLs:
+AFL strictly requires starting inputs, and will not execute at all without being provided an input directory containing at least one example input. A high-quality input corpus contains many different examples of valid inputs which exercise different features of the parsing process being fuzzed. Further instruction on crafting an effective input corpus is available in the [AFL README], including discussion of the dictionary approach for highly verbose data formats such as HTML.
+
+For this tutorial, we won't be generating a high-quality corpus, but just enough to demonstrate the basic mechanism. To do this, we'll create a directory called `in` with a few files containing valid URLs:
+
+[AFL README]: https://lcamtuf.coredump.cx/afl/README.txt
 
 ```sh
 mkdir in
@@ -88,7 +94,9 @@ cargo afl fuzz -i in -o out target/debug/url-fuzz-target
 
 The `fuzz` subcommand of `cargo-afl` is the primary interface for fuzzing Rust code with AFL. For those already familiar with AFL, the `fuzz` subcommand of `cargo-afl` is identical to running `afl-fuzz`.
 
-The `-i` flag specifies a directory full of input files AFL will use as seeds.
+The `-i` flag specifies a directory containing input files AFL will use as seeds.
+
+Inputs can be filtered by their file extension with the `-e ext` flag.
 
 The `-o` flag specifies a directory AFL will write all its state and results to.
 
