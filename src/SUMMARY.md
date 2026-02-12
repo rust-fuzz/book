@@ -7,6 +7,7 @@
     * [Tutorial](./cargo-fuzz/tutorial.md)
     * [Guide](./cargo-fuzz/guide.md)
     * [Structure-Aware Fuzzing](./cargo-fuzz/structure-aware-fuzzing.md)
+    * [Fuzzing APIs with Callbacks](./cargo-fuzz/callback-fuzz.md)
     * [Coverage](./cargo-fuzz/coverage.md)
     * [Targets](./cargo-fuzz/targets.md)
     * [Fuzzing on Windows](./cargo-fuzz/windows.md)
