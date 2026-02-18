@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Tutorial - Rust Fuzz Book</title>
+        <title>Writing Oracles that Access Data - Rust Fuzz Book</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/tutorial.html" class="active"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/oracles-accessing-data.html"><strong aria-hidden="true">1.5.</strong> Writing Oracles that Access Data</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/coverage.html"><strong aria-hidden="true">1.6.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/targets.html"><strong aria-hidden="true">1.7.</strong> Targets</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/windows.html"><strong aria-hidden="true">1.8.</strong> Fuzzing on Windows</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cargo-fuzz/windows/setup.html"><strong aria-hidden="true">1.8.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/windows/dll-fuzzing.html"><strong aria-hidden="true">1.8.2.</strong> Fuzzing DLLs</a></li></ol></li><li class="chapter-item expanded "><a href="../cargo-fuzz/ci.html"><strong aria-hidden="true">1.9.</strong> Fuzzing in CI</a></li></ol></li><li class="chapter-item expanded "><a href="../afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../afl/installing-from-source.html"><strong aria-hidden="true">2.3.</strong> Installing from source</a></li></ol></li><li class="chapter-item expanded "><a href="../trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/oracles-accessing-data.html" class="active"><strong aria-hidden="true">1.5.</strong> Writing Oracles that Access Data</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/coverage.html"><strong aria-hidden="true">1.6.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/targets.html"><strong aria-hidden="true">1.7.</strong> Targets</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/windows.html"><strong aria-hidden="true">1.8.</strong> Fuzzing on Windows</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cargo-fuzz/windows/setup.html"><strong aria-hidden="true">1.8.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../cargo-fuzz/windows/dll-fuzzing.html"><strong aria-hidden="true">1.8.2.</strong> Fuzzing DLLs</a></li></ol></li><li class="chapter-item expanded "><a href="../cargo-fuzz/ci.html"><strong aria-hidden="true">1.9.</strong> Fuzzing in CI</a></li></ol></li><li class="chapter-item expanded "><a href="../afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="../afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="../afl/installing-from-source.html"><strong aria-hidden="true">2.3.</strong> Installing from source</a></li></ol></li><li class="chapter-item expanded "><a href="../trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -163,81 +163,50 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="tutorial"><a class="header" href="#tutorial">Tutorial</a></h1>
-<p>For this tutorial, we're going to be fuzzing the URL parsing crate <a href="https://github.com/servo/rust-url">rust-url</a>. Our goal here is to find some input generated by the fuzzer such that, when passed to <code>Url::parse</code>, it causes some sort of panic or crash to happen.</p>
-<p>To start, clone the rust-url repository and change directories into it:</p>
-<pre><code class="language-sh">git clone https://github.com/servo/rust-url.git
-cd rust-url
+                        <h1 id="writing-oracles-that-access-data"><a class="header" href="#writing-oracles-that-access-data">Writing Oracles that Access Data</a></h1>
+<p>Rust requires that a reference should point to a valid value, as defined in <a href="https://doc.rust-lang.org/reference/behavior-considered-undefined.html#r-undefined.validity.reference-box">The Rust Reference</a>:</p>
+<blockquote>
+<p>A reference or <code>Box&lt;T&gt;</code> must be aligned and non-null, it cannot be dangling, and it must point to a valid value.</p>
+</blockquote>
+<p>As a result, a high-quality harness should validate <strong>every reference</strong> obtained from the target library.</p>
+<p>It's very flexible to design APIs with callbacks in Rust, while it's not easy to write good fuzzing harnesses for those.</p>
+<pre><code class="language-rust ignore">pub fn api_with_callback(user_data: &amp;[u8], callback: impl Fn(&amp;[u32])) {
+    let dangling_data_ptr: *mut u32 = process_user_data(user_data);
+    let data_len: usize = HARDCODED_VALUE;
+    let data = unsafe { std::slice::from_raw_parts(dangling_data_ptr, data_len) };
+    callback(data);
+}
 </code></pre>
-<p>Although we could fuzz the latest commit on <code>master</code>, we're going to checkout a specific revision that is known to have a parsing bug:</p>
-<pre><code class="language-sh">git checkout bfa167b4e0253642b6766a7aa74a99df60a94048
-</code></pre>
-<p>Initialize cargo-fuzz:</p>
-<pre><code class="language-sh">cargo fuzz init
-</code></pre>
-<p>This will create a directory called <code>fuzz_targets</code> which will contain a collection of <em>fuzzing targets</em>. It is generally a good idea to check in the files generated by <code>init</code>. Each fuzz target is a Rust program that is given random data and tests a crate (in this case, rust-url). <code>cargo fuzz init</code> automatically generates an initial fuzz target for us.
-Use <code>cargo fuzz list</code> to view the list of all existing fuzz targets:</p>
-<pre><code class="language-sh">cargo fuzz list
-</code></pre>
-<p>The source code for this fuzz target by default lives in <code>fuzz/fuzz_targets/&lt;fuzz target name&gt;.rs</code>. Open that file and edit it to look like this:</p>
-<pre><code class="language-rust ignore">#![no_main]
-#[macro_use] extern crate libfuzzer_sys;
-extern crate url;
-
+<p>In the above example, creating slice from dangling pointer is definitely a UB. However, current fuzzing solutions are often equipped only with address sanitizer, which will detect violations only if an invalid memory is <strong>accessed</strong>. As a result, the creation of such a slice will not be catched by the address sanitizer, and the effectiveness depends on the quality of fuzzing harnesses.</p>
+<pre><code class="language-rust ignore">// Bad harness
 fuzz_target!(|data: &amp;[u8]| {
-    if let Ok(s) = std::str::from_utf8(data) {
-        let _ = url::Url::parse(s);
-    }
+    api_with_callback(data, |lib_data| {});
+});
+
+// Good harness
+fuzz_target!(|data: &amp;[u8]| {
+    api_with_callback(data, |lib_data| {
+        lib_data.iter().for_each(|byte_ref| {
+            core::hint::black_box(*byte_ref);
+        });
+    });
 });
 </code></pre>
-<p><code>libFuzzer</code> is going to repeatedly call the body of <code>fuzz_target!()</code> with a slice of pseudo-random bytes, until your program hits an error condition (segfault, panic, etc). Write your <code>fuzz_target!()</code> body to hit the entry point you need.</p>
-<p>Since the generated data is a byte slice, we'll need to convert it to a UTF-8 <code>&amp;str</code> since rust-url expects that when parsing.</p>
-<p>To begin fuzzing, run:</p>
-<pre><code class="language-sh">cargo fuzz run &lt;fuzz target name&gt;
-</code></pre>
-<p>Congratulations, you're fuzzing! The output you're seeing is generated by the fuzzer <a href="http://llvm.org/docs/LibFuzzer.html">libFuzzer</a>. To learn more about what the output means <a href="http://llvm.org/docs/LibFuzzer.html#output">see the 'output' section in the libFuzzer documentation</a>.</p>
-<p>If you leave it going for long enough you'll eventually discover a crash. The output would look something like this:</p>
-<pre><code class="language-txt">...
-#56232	NEW    cov: 2066 corp: 110/4713b exec/s: 11246 rss: 170Mb L: 42 MS: 1 EraseBytes-
-#58397	NEW    cov: 2069 corp: 111/4755b exec/s: 11679 rss: 176Mb L: 42 MS: 1 EraseBytes-
-#59235	NEW    cov: 2072 corp: 112/4843b exec/s: 11847 rss: 178Mb L: 88 MS: 4 InsertByte-ChangeBit-CopyPart-CopyPart-
-#60882	NEW    cov: 2075 corp: 113/4953b exec/s: 12176 rss: 183Mb L: 110 MS: 1 InsertRepeatedBytes-
-thread '&lt;unnamed&gt;' panicked at 'index out of bounds: the len is 1 but the index is 1', src/host.rs:105
-note: Run with `RUST_BACKTRACE=1` for a backtrace.
-==70997== ERROR: libFuzzer: deadly signal
-    #0 0x1097c5500 in __sanitizer_print_stack_trace (libclang_rt.asan_osx_dynamic.dylib:x86_64+0x62500)
-    #1 0x108383d1b in fuzzer::Fuzzer::CrashCallback() (fuzzer_script_1:x86_64+0x10002fd1b)
-    #2 0x108383ccd in fuzzer::Fuzzer::StaticCrashSignalCallback() (fuzzer_script_1:x86_64+0x10002fccd)
-    #3 0x1083d19c7 in fuzzer::CrashHandler(int, __siginfo*, void*) (fuzzer_script_1:x86_64+0x10007d9c7)
-    ...
-    #33 0x10838b393 in fuzzer::Fuzzer::Loop() (fuzzer_script_1:x86_64+0x100037393)
-    #34 0x1083650ec in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) (fuzzer_script_1:x86_64+0x1000110ec)
-    #35 0x108396c3f in main (fuzzer_script_1:x86_64+0x100042c3f)
-    #36 0x7fff91552234 in start (libdyld.dylib:x86_64+0x5234)
-
-NOTE: libFuzzer has rudimentary signal handlers.
-      Combine libFuzzer with AddressSanitizer or similar for better crash reports.
-SUMMARY: libFuzzer: deadly signal
-MS: 2 InsertByte-EraseBytes-; base unit: 3c4fc9770beb5a732d1b78f38cc8b62b20cb997c
-0x68,0x74,0x74,0x70,0x3a,0x2f,0x2f,0x5b,0x3a,0x5d,0x3a,0x78,0xc5,0xa4,0x1,0x3a,0x7f,0x1,0x59,0xc5,0xa4,0xd,0x78,0x78,0x3a,0x78,0x69,0x3a,0x0,0x69,0x3a,0x5c,0xd,0x7e,0x78,0x40,0x0,0x25,0xa,0x0,0x29,0x20,
-http://[:]:x\xc5\xa4\x01:\x7f\x01Y\xc5\xa4\x0dxx:xi:\x00i:\\\x0d~x@\x00%\x0a\x00)
-artifact_prefix='/private/tmp/rust-url/fuzz/artifacts/fuzzer_script_1/'; Test unit written to /home/user/rust-url/fuzz/artifacts/fuzzer_script_1/crash-e9b1b5183e46a288c25a2a073262cdf35408f697
-Base64: aHR0cDovL1s6XTp4xaQBOn8BWcWkDXh4OnhpOgBpOlwNfnhAACUKACkg
-</code></pre>
-<p>The line in the output that starts with <code>http</code> is the input that <a href="https://github.com/servo/rust-url/pull/108">causes a panic in rust-url</a>.</p>
+<p>In the good harness above, each byte of <code>lib_data</code> is accessed (and the <a href="https://doc.rust-lang.org/std/hint/fn.black_box.html"><code>black_box</code></a> is used to avoid the access being optimized out), and any invalid memory accesses will be catched by address sanitizers, leading to effective bug detection.</p>
+<p>As described above, the reference data can be obtained either from the API's return value, or in the parameters of callbacks. As long as a reference is obtained from the target library, such a reference should be checked in the fuzzing harness to catch unsoundness. Beyond manuanlly writing checking patterns, crates like <a href="https://crates.io/crates/touched">touched</a> provide convenient utilities for this purpose.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../cargo-fuzz/setup.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../cargo-fuzz/structure-aware-fuzzing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="../cargo-fuzz/guide.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../cargo-fuzz/coverage.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -249,13 +218,13 @@ Base64: aHR0cDovL1s6XTp4xaQBOn8BWcWkDXh4OnhpOgBpOlwNfnhAACUKACkg
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="../cargo-fuzz/setup.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../cargo-fuzz/structure-aware-fuzzing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="../cargo-fuzz/guide.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../cargo-fuzz/coverage.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

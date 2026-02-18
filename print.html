@@ -97,7 +97,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/coverage.html"><strong aria-hidden="true">1.5.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/targets.html"><strong aria-hidden="true">1.6.</strong> Targets</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/windows.html"><strong aria-hidden="true">1.7.</strong> Fuzzing on Windows</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="cargo-fuzz/windows/setup.html"><strong aria-hidden="true">1.7.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/windows/dll-fuzzing.html"><strong aria-hidden="true">1.7.2.</strong> Fuzzing DLLs</a></li></ol></li><li class="chapter-item expanded "><a href="cargo-fuzz/ci.html"><strong aria-hidden="true">1.8.</strong> Fuzzing in CI</a></li></ol></li><li class="chapter-item expanded "><a href="afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="afl/installing-from-source.html"><strong aria-hidden="true">2.3.</strong> Installing from source</a></li></ol></li><li class="chapter-item expanded "><a href="trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded "><a href="cargo-fuzz.html"><strong aria-hidden="true">1.</strong> Fuzzing with cargo-fuzz</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="cargo-fuzz/setup.html"><strong aria-hidden="true">1.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/tutorial.html"><strong aria-hidden="true">1.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/guide.html"><strong aria-hidden="true">1.3.</strong> Guide</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/structure-aware-fuzzing.html"><strong aria-hidden="true">1.4.</strong> Structure-Aware Fuzzing</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/oracles-accessing-data.html"><strong aria-hidden="true">1.5.</strong> Writing Oracles that Access Data</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/coverage.html"><strong aria-hidden="true">1.6.</strong> Coverage</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/targets.html"><strong aria-hidden="true">1.7.</strong> Targets</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/windows.html"><strong aria-hidden="true">1.8.</strong> Fuzzing on Windows</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="cargo-fuzz/windows/setup.html"><strong aria-hidden="true">1.8.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="cargo-fuzz/windows/dll-fuzzing.html"><strong aria-hidden="true">1.8.2.</strong> Fuzzing DLLs</a></li></ol></li><li class="chapter-item expanded "><a href="cargo-fuzz/ci.html"><strong aria-hidden="true">1.9.</strong> Fuzzing in CI</a></li></ol></li><li class="chapter-item expanded "><a href="afl.html"><strong aria-hidden="true">2.</strong> Fuzzing with afl.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="afl/setup.html"><strong aria-hidden="true">2.1.</strong> Setup</a></li><li class="chapter-item expanded "><a href="afl/tutorial.html"><strong aria-hidden="true">2.2.</strong> Tutorial</a></li><li class="chapter-item expanded "><a href="afl/installing-from-source.html"><strong aria-hidden="true">2.3.</strong> Installing from source</a></li></ol></li><li class="chapter-item expanded "><a href="trophy-case.html"><strong aria-hidden="true">3.</strong> Trophy case</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -446,6 +446,37 @@ libfuzzer_sys::fuzz_target!(|methods: Vec&lt;AllocatorMethod&gt;| {
     }
 });
 </code></pre>
+<h1 id="writing-oracles-that-access-data"><a class="header" href="#writing-oracles-that-access-data">Writing Oracles that Access Data</a></h1>
+<p>Rust requires that a reference should point to a valid value, as defined in <a href="https://doc.rust-lang.org/reference/behavior-considered-undefined.html#r-undefined.validity.reference-box">The Rust Reference</a>:</p>
+<blockquote>
+<p>A reference or <code>Box&lt;T&gt;</code> must be aligned and non-null, it cannot be dangling, and it must point to a valid value.</p>
+</blockquote>
+<p>As a result, a high-quality harness should validate <strong>every reference</strong> obtained from the target library.</p>
+<p>It's very flexible to design APIs with callbacks in Rust, while it's not easy to write good fuzzing harnesses for those.</p>
+<pre><code class="language-rust ignore">pub fn api_with_callback(user_data: &amp;[u8], callback: impl Fn(&amp;[u32])) {
+    let dangling_data_ptr: *mut u32 = process_user_data(user_data);
+    let data_len: usize = HARDCODED_VALUE;
+    let data = unsafe { std::slice::from_raw_parts(dangling_data_ptr, data_len) };
+    callback(data);
+}
+</code></pre>
+<p>In the above example, creating slice from dangling pointer is definitely a UB. However, current fuzzing solutions are often equipped only with address sanitizer, which will detect violations only if an invalid memory is <strong>accessed</strong>. As a result, the creation of such a slice will not be catched by the address sanitizer, and the effectiveness depends on the quality of fuzzing harnesses.</p>
+<pre><code class="language-rust ignore">// Bad harness
+fuzz_target!(|data: &amp;[u8]| {
+    api_with_callback(data, |lib_data| {});
+});
+
+// Good harness
+fuzz_target!(|data: &amp;[u8]| {
+    api_with_callback(data, |lib_data| {
+        lib_data.iter().for_each(|byte_ref| {
+            core::hint::black_box(*byte_ref);
+        });
+    });
+});
+</code></pre>
+<p>In the good harness above, each byte of <code>lib_data</code> is accessed (and the <a href="https://doc.rust-lang.org/std/hint/fn.black_box.html"><code>black_box</code></a> is used to avoid the access being optimized out), and any invalid memory accesses will be catched by address sanitizers, leading to effective bug detection.</p>
+<p>As described above, the reference data can be obtained either from the API's return value, or in the parameters of callbacks. As long as a reference is obtained from the target library, such a reference should be checked in the fuzzing harness to catch unsoundness. Beyond manuanlly writing checking patterns, crates like <a href="https://crates.io/crates/touched">touched</a> provide convenient utilities for this purpose.</p>
 <h1 id="code-coverage"><a class="header" href="#code-coverage">Code Coverage</a></h1>
 <p>Visualizing code coverage helps you understand which code paths are being fuzzed
 and — more importantly — which aren't. To help the fuzzer exercise

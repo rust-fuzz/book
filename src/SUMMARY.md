@@ -7,6 +7,7 @@
     * [Tutorial](./cargo-fuzz/tutorial.md)
     * [Guide](./cargo-fuzz/guide.md)
     * [Structure-Aware Fuzzing](./cargo-fuzz/structure-aware-fuzzing.md)
+    * [Writing Oracles that Access Data](./cargo-fuzz/oracles-accessing-data.md)
     * [Coverage](./cargo-fuzz/coverage.md)
     * [Targets](./cargo-fuzz/targets.md)
     * [Fuzzing on Windows](./cargo-fuzz/windows.md)
