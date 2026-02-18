@@ -4,7 +4,7 @@ Rust requires that a reference should point to a valid value, as defined in [The
 
 > A reference or `Box<T>` must be aligned and non-null, it cannot be dangling, and it must point to a valid value.
 
-As a result, a high-quality harness should validate **every reference** obtained from the target library. There are two main categories to obtain data from the target library: either from the API's return value, or in the parameters of callbacks.
+As a result, a high-quality harness should validate **every reference** obtained from the target library.
 
 It's very flexible to design APIs with callbacks in Rust, while it's not easy to write good fuzzing harnesses for those.
 
