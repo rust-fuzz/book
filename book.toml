@@ -2,3 +2,6 @@
 title = "Rust Fuzz Book"
 description = "Guide on how to fuzz test software written in the Rust programming language"
 authors = ["Corey Farwell"]
+
+[output.html]
+edit-url-template = "https://github.com/rust-fuzz/book/edit/master/{path}"
