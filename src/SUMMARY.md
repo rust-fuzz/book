@@ -14,6 +14,7 @@
         * [Setup](./cargo-fuzz/windows/setup.md)
         * [Fuzzing DLLs](./cargo-fuzz/windows/dll-fuzzing.md)
     * [Fuzzing in CI](./cargo-fuzz/ci.md)
+    * [Create Unit Tests from Fuzz Crashes](./cargo-fuzz/fuzz-crash-to-unit-test.md)
 * [Fuzzing with afl.rs](./afl.md)
     * [Setup](./afl/setup.md)
     * [Tutorial](./afl/tutorial.md)
